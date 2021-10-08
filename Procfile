@@ -1,0 +1,1 @@
+web: gunicorn AplikacjaKsiazkowa2.wsgi --log-file -
