@@ -102,11 +102,7 @@ def add_book(request):
 def lista(request):
     if request.method == "POST":
         data = Book.objects.order_by('id')
-        d1 = datetime.date.today()
-        d2 = datetime.date.today()
-        jezyk = "PL"
-        tytul = "Tytuł"
-        autor = "Autor"
+
         try:
             d1 = request.POST.get('d1')
             d2 = request.POST.get('d2')
@@ -116,7 +112,7 @@ def lista(request):
         except TypeError:
             messages.error("Type error - brak wartości wyszukiwania")
         else:
-            if len(d1) and len(d2):
+            if d1 is not None and d2 is not None:
                 print("Lista - wyszukiwanie po przedziale daty: ")
                 print('\n lista - metoda POST, d1= {}, d2= {}'.format(d1, d2))
                 try:
@@ -127,7 +123,7 @@ def lista(request):
                     if not data.exists():
                         messages.warning(request, "Pusty zakres przeszukiwania dat!")
 
-            if len(jezyk):
+            if jezyk is not None:
                 print('Lista - Wyszukiwanie po języku: {} \n'.format(jezyk))
                 try:
                     data = Book.objects.filter(languague__contains=jezyk)
@@ -137,7 +133,7 @@ def lista(request):
                     if not data.exists():
                         messages.warning(request, "Brak książek tego języka")
 
-            if len(tytul):
+            if tytul is not None:
                 print('Lista - wyszukiwanie po tytule: {} \n'.format(tytul))
                 try:
                     data = Book.objects.filter(title__contains=tytul)
@@ -147,7 +143,7 @@ def lista(request):
                     if not data.exists():
                         messages.warning(request, "Brak książek o tym tytule")
 
-            if len(autor):
+            if autor is not None:
                 print("lista - wyszukiwanie po autorze: {} \n ".format(autor))
                 try:
                     data = Book.objects.filter(author__contains=autor)
