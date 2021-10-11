@@ -19,14 +19,14 @@ class BookViewSet(viewsets.ModelViewSet):
 
 
 def index(request):
-    messages.success(request, "Dzień dobry!")
+    # messages.success(request, "Dzień dobry!")
     return render(request, 'aplikacjaKsiazkowa2/index.html')
 
 
 def edit(request, id):
     edytowana = get_object_or_404(Book, id=id)
     if request.method == 'POST':
-        messages.success(request, "POST - Edytujesz książkę o id: {}".format(id))
+        # messages.success(request, "POST - Edytujesz książkę o id: {}".format(id))
         title = request.POST.get('title')
         author = request.POST.get('author')
         data = request.POST.get('pub_date')
@@ -34,23 +34,34 @@ def edit(request, id):
         pages = request.POST.get('pages')
         cover = request.POST.get('cover')
         languague = request.POST.get('languague')
-#        print("edit - {}, {}, {}, {}, {}, {}, {}".format(title, author, data, isbn, pages, cover, languague))
 
         if edytowana.title != title:
             edytowana.title = title
         if edytowana.author != author:
             edytowana.author = author
-        if edytowana.pub_date != data:
-            edytowana.pub_date = data
+        try:
+            if edytowana.pub_date != data:
+                edytowana.pub_date = data
+        except ValidationError:
+            messages.error(request, "Podano zły format daty!")
+            print("edit - data: {}".format(edytowana.pub_date))
         if edytowana.isbn != isbn:
             edytowana.isbn = isbn
-        if edytowana.pages != pages:
-            edytowana.pages = pages
+        try:
+            if edytowana.pages != pages:
+                edytowana.pages = pages
+        except ValidationError:
+            messages.error(request, "Podano zły format ilości stron!")
+            print("edit - strony: {}".format(edytowana.pages))
+
         if edytowana.cover != cover:
             edytowana.cover = cover
         if edytowana.languague != languague:
             edytowana.languague = languague
-        edytowana.save()
+        try:
+            edytowana.save()
+        except ValidationError:
+            messages.error(request, "Podano zły format danych!")
 
         data = Book.objects.order_by('id')
         context = {"books_data": data}
@@ -72,7 +83,7 @@ def add_book(request):
         pages = request.POST.get('pages')
         cover = request.POST.get('cover')
         lang = request.POST.get('languague')
-        print("tytul= {}, {}, {}, {}, {}, {}, {}".format(tytul, autor, pub_date, isbn, pages, cover, lang))
+        # print("tytul= {}, {}, {}, {}, {}, {}, {}".format(tytul, autor, pub_date, isbn, pages, cover, lang))
         try:
             nowa = Book(
                 title=tytul,
@@ -88,13 +99,13 @@ def add_book(request):
             print("ValueError")
             messages.error(request, "ValueError.")
         except ValidationError:
-            messages.error(request, "ValidationError")
+            messages.error(request, "ValidationError - błąd typu danych")
         else:
             messages.success(request, "Dodano nową książkę - POST: {}".format(tytul))
 
         return render(request, 'aplikacjaKsiazkowa2/add_book.html')
 
-    messages.success(request, "Dodawanie książki - GET.")
+    # messages.success(request, "Dodawanie książki - GET.")
     print("add_book - GET")
     print(datetime.datetime.now())
     return render(request, 'aplikacjaKsiazkowa2/add_book.html')

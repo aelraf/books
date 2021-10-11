@@ -44,13 +44,13 @@
                           <input type="text" class="form-control" id="author" placeholder="Autor" name="author" value="{{ book.author }}">
                       </th>
                       <th>
-                          <input type="date" class="form-control" id="pub_date" placeholder="Data publikacji" name="pub_date" value="{{ book.pub_date }}">
+                          <input type="date" class="form-control" id="pub_date" placeholder="Data publikacji" name="pub_date" content="{{ book.pub_date }}" value="{{ book.pub_date }}">
                       </th>
                       <th>
                           <input type="text" class="form-control" id="isbn" placeholder="ISBN" name="isbn" value="{{ book.isbn }}">
                       </th>
                       <th>
-                          <input type="number" class="form-control" id="pages" placeholder="Liczba stron" name="pages" value="{{ book.pages }">
+                          <input type="number" class="form-control" id="pages" placeholder="Liczba stron" name="pages" content="{{ book.pages }}" value="{{ book.pages }">
                       </th>
                       <th>
                           <input type="text" class="form-control" id="cover" placeholder="Link do okładki" name="cover" value="{{ book.cover }}">
