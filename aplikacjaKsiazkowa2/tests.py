@@ -54,7 +54,9 @@ class BookViewTests(TestCase):
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {
             'd1': datetime.date(1999, 1, 1),
             'd2': datetime.date.today()})
-        self.assertEqual(response.status_code, 200)
+        code = response.status_code
+        self.assertEqual(code, 200)
+        print("kod odpowiedzi: {}".format(code))
         books_data = Book.objects.filter(pub_date__range=(d_p, d_k))
 
         self.assertQuerysetEqual(response.context['books_data'], books_data)
@@ -62,24 +64,61 @@ class BookViewTests(TestCase):
     def test_list_book_select_languague(self):
         jezyk = "ENG"
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {'jezyk': jezyk})
-        self.assertEqual(response.status_code, 200)
-        books_data = Book.object.filter(languague__contains=jezyk)
+        code = response.status_code
+        self.assertEqual(code, 200)
+        print("kod odpowiedzi: {}".format(code))
+        books_data = Book.objects.filter(languague__contains=jezyk)
 
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
     def test_list_book_select_title(self):
         tytul = "Hobbit"
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {'tytul': tytul})
-        self.assertEqual(response.status_code, 200)
-        books_data = Book.object.filter(title__contains=tytul)
+        code = response.status_code
+        self.assertEqual(code, 200)
+        print("kod odpowiedzi: {}".format(code))
+        books_data = Book.objects.filter(title__contains=tytul)
 
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
     def test_list_book_select_author(self):
         autor = "Jan"
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {'autor': autor})
-        self.assertEqual(response.status_code, 200)
-        books_data = Book.object.filter(title__contains=autor)
+        code = response.status_code
+        self.assertEqual(code, 200)
+        print("kod odpowiedzi: {}".format(code))
+        books_data = Book.objects.filter(title__contains=autor)
 
         self.assertQuerysetEqual(response.context['books_data'], books_data)
+
+    def test_add_book_get(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:add_book'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_book_add_good_book(self):
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            languague="PL"
+        )
+        create_book(book)
+
+        response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'),
+                                    {'title': book.title,
+                                     'author': book.author,
+                                     'pub_date': book.pub_date,
+                                     'isbn': book.isbn,
+                                     'pages': book.pages,
+                                     'cover': book.cover,
+                                     'languague': book.languague
+                                     })
+        self.assertEqual(response.status_code, 200)
+
+
+
+
 
