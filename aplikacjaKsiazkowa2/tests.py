@@ -208,6 +208,9 @@ class BookViewTests(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
+        books_data = Book.objects.all()
+
+        self.assertQuerysetEqual(response.context['books_data'], books_data)
 
 
 
