@@ -35,6 +35,10 @@ def create_book(book):
 
 
 class BookViewTests(TestCase):
+    def test_index(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:index'))
+        self.assertEqual(response.status_code, 200)
+
     def test_no_book(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
         self.assertEqual(response.status_code, 200)
@@ -93,9 +97,10 @@ class BookViewTests(TestCase):
 
     def test_add_book_get(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:add_book'))
+
         self.assertEqual(response.status_code, 200)
 
-    def test_add_book_add_good_book(self):
+    def test_add_book_post(self):
         book = Book(
             title="Brzechwa dzieciom",
             author="Jan Brzechwa",
@@ -105,8 +110,6 @@ class BookViewTests(TestCase):
             cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
             languague="PL"
         )
-        create_book(book)
-
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'),
                                     {'title': book.title,
                                      'author': book.author,
@@ -118,7 +121,93 @@ class BookViewTests(TestCase):
                                      })
         self.assertEqual(response.status_code, 200)
 
+        self.assertIs(Book.objects.filter(title=book.title).exists(), True)
 
+    def test_edit_book_get_good_id(self):
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            languague="PL"
+        )
+        create_book(book)
+        url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_book_get_bad_id(self):
+        url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 100})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_edit_book_post(self):
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            languague="PL"
+        )
+        create_book(book)
+        url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
+        response = self.client.post(url, {
+            'title': "Brzechwa misiom i innym",
+            'author': book.author,
+            'pub_date': book.pub_date,
+            'isbn': book.isbn,
+            'pages': book.pages,
+            'cover': book.cover,
+            'languague': book.languague
+        })
+        self.assertEqual(response.status_code, 200)
+        wynik = Book.objects.filter(title="Brzechwa misiom i innym").exists()
+        print("test_edit_book_post: {}".format(wynik))
+        self.assertIs(wynik, True)
+
+    def test_delete_book_get_good_id(self):
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            languague="PL"
+        )
+        create_book(book)
+        url = reverse('aplikacjaKsiazkowa2:delete', kwargs={'id': 1})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_book_get_bad_id(self):
+        url = reverse('aplikacjaKsiazkowa2:delete', kwargs={'id': 100})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_book_past(self):
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            languague="PL"
+        )
+        create_book(book)
+        url = reverse('aplikacjaKsiazkowa2:delete', kwargs={'id': 1})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
 
 
 

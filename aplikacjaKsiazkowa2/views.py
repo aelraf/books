@@ -34,6 +34,7 @@ def edit(request, id):
         pages = request.POST.get('pages')
         cover = request.POST.get('cover')
         languague = request.POST.get('languague')
+#        print("edit - {}, {}, {}, {}, {}, {}, {}".format(title, author, data, isbn, pages, cover, languague))
 
         if edytowana.title != title:
             edytowana.title = title
