@@ -30,7 +30,7 @@ def create_book(book):
         isbn=book.isbn,
         pages=book.pages,
         cover=book.cover,
-        languague=book.languague
+        language=book.language
     )
 
 
@@ -108,7 +108,7 @@ class BookViewTests(TestCase):
             isbn="53387501243KS",
             pages=136,
             cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            languague="PL"
+            language="PL"
         )
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'),
                                     {'title': book.title,
@@ -117,7 +117,7 @@ class BookViewTests(TestCase):
                                      'isbn': book.isbn,
                                      'pages': book.pages,
                                      'cover': book.cover,
-                                     'languague': book.languague
+                                     'language': book.language
                                      })
         self.assertEqual(response.status_code, 200)
 
@@ -131,7 +131,7 @@ class BookViewTests(TestCase):
             isbn="53387501243KS",
             pages=136,
             cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            languague="PL"
+            language="PL"
         )
         create_book(book)
         url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
@@ -153,7 +153,7 @@ class BookViewTests(TestCase):
             isbn="53387501243KS",
             pages=136,
             cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            languague="PL"
+            language="PL"
         )
         create_book(book)
         url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
@@ -164,7 +164,7 @@ class BookViewTests(TestCase):
             'isbn': book.isbn,
             'pages': book.pages,
             'cover': book.cover,
-            'languague': book.languague
+            'language': book.language
         })
         self.assertEqual(response.status_code, 200)
         wynik = Book.objects.filter(title="Brzechwa misiom i innym").exists()
@@ -179,7 +179,7 @@ class BookViewTests(TestCase):
             isbn="53387501243KS",
             pages=136,
             cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            languague="PL"
+            language="PL"
         )
         create_book(book)
         url = reverse('aplikacjaKsiazkowa2:delete', kwargs={'id': 1})
@@ -201,7 +201,7 @@ class BookViewTests(TestCase):
             isbn="53387501243KS",
             pages=136,
             cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            languague="PL"
+            language="PL"
         )
         create_book(book)
         url = reverse('aplikacjaKsiazkowa2:delete', kwargs={'id': 1})

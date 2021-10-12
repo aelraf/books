@@ -8,12 +8,12 @@ from rest_framework import serializers
 class BookSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'pub_date', 'isbn', 'pages', 'cover', 'languague']
+        fields = ['id', 'title', 'author', 'pub_date', 'isbn', 'pages', 'cover', 'language']
 
 
 '''
 pierwsze podejście z tutoriala
-'''
+
 class BookSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(max_length=200)
@@ -35,5 +35,12 @@ class BookSerializer(serializers.Serializer):
         aktualizuje i zwraca istniejące instancje ksiażek, danych w validated_data
         """
         instance.title = validated_data.get('title', instance.title)
-        
-
+        instance.author = validated_data.get('author', instance.author)
+        instance.pub_date = validated_data.get('pub_date', instance.pub_date)
+        instance.isbn = validated_data.get('isbn', instance.isbn)
+        instance.pages = validated_data.get('pages', instance.pages)
+        instance.cover = validated_data.get('cover', instance.cover)
+        instance.language = validated_data.get('language', instance.language)
+        instance.save()
+        return instance
+'''

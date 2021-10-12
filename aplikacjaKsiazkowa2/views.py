@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from aplikacjaKsiazkowa2.models import Book
 
 from rest_framework import viewsets, status
+
+from . import serializer
 from .serializer import BookSerializer
 
 
@@ -33,7 +35,7 @@ def my_api(request):
         except Book.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        return Response()
+        return Response(serializer.data)
 
     elif 'title' in request.GET:
         title = request.GET['title']
@@ -88,7 +90,7 @@ def edit(request, id):
         isbn = request.POST.get('isbn')
         pages = request.POST.get('pages')
         cover = request.POST.get('cover')
-        languague = request.POST.get('languague')
+        language = request.POST.get('language')
 
         if edytowana.title != title:
             edytowana.title = title
@@ -111,8 +113,8 @@ def edit(request, id):
 
         if edytowana.cover != cover:
             edytowana.cover = cover
-        if edytowana.languague != languague:
-            edytowana.languague = languague
+        if edytowana.language != language:
+            edytowana.language = language
         try:
             edytowana.save()
         except ValidationError:
@@ -137,7 +139,7 @@ def add_book(request):
         isbn = request.POST.get('isbn')
         pages = request.POST.get('pages')
         cover = request.POST.get('cover')
-        lang = request.POST.get('languague')
+        lang = request.POST.get('language')
         # print("tytul= {}, {}, {}, {}, {}, {}, {}".format(tytul, autor, pub_date, isbn, pages, cover, lang))
         try:
             nowa = Book(
@@ -147,7 +149,7 @@ def add_book(request):
                 isbn=isbn,
                 pages=pages,
                 cover=cover,
-                languague=lang
+                language=lang
             )
             nowa.save()
         except ValueError:
@@ -173,7 +175,7 @@ def lista(request):
         try:
             d1 = request.POST.get('d1')
             d2 = request.POST.get('d2')
-            jezyk = request.POST.get('languague')
+            jezyk = request.POST.get('language')
             tytul = request.POST.get('title')
             autor = request.POST.get('author')
         except TypeError:
@@ -193,7 +195,7 @@ def lista(request):
             if jezyk is not None:
                 print('Lista - Wyszukiwanie po języku: {} \n'.format(jezyk))
                 try:
-                    data = Book.objects.filter(languague__contains=jezyk)
+                    data = Book.objects.filter(language__contains=jezyk)
                 except ValidationError:
                     messages.warning(request, "ValidationError - zły język! Podaj prawidłowe dane!")
                 else:

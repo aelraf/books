@@ -41,7 +41,7 @@
                     <th scope="row">{{ book.isbn }}</th>
                     <th scope="row">{{ book.pages }}</th>
                     <th scope="row">{{ book.cover }}</th>
-                    <th scope="row">{{ book.languague }}</th>
+                    <th scope="row">{{ book.language }}</th>
                     <th scope="row">
                         <form action="{% url 'aplikacjaKsiazkowa2:edit' id=book.id %}">
                             {% csrf_token %}
@@ -98,7 +98,7 @@
             <div>
             {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Wyszukaj język</button><br>
-                <input type="text" class="form-control" id="l_search" name="languague"/>
+                <input type="text" class="form-control" id="l_search" name="language"/>
             </div>
             <br>
         </form>
