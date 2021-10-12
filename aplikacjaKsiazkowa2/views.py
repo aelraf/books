@@ -32,47 +32,46 @@ def my_api(request):
         author = request.GET['author']
         try:
             data = Book.objects.filter(author__contains=author)
+            serial = BookSerializer(data)
+            return Response(serial.data)
         except Book.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-        return Response(serializer.data)
 
     elif 'title' in request.GET:
         title = request.GET['title']
         try:
             data = Book.objects.filter(title__contains=title)
+            serial = BookSerializer(data)
+            return Response(serial.data)
         except Book.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-        return Response()
 
     elif 'language' in request.GET:
         language = request.GET['language']
         try:
             data = Book.objects.filter(language__contains=language)
+            serial = BookSerializer(data)
+            return Response(serial.data)
         except Book.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-        return Response()
 
     elif 'start_date' in request.GET and 'end_date' in request.GET:
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         try:
             data = Book.objects.filter(pub_date__range=(start_date, end_date))
+            serial = BookSerializer(data)
+            return Response(serial.data)
         except ValidationError:
             messages.error(request, "Błąd validacji - zły format daty")
             return Response(status=status.HTTP_400_BAD_REQUEST)
         except Book.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        return Response()
-
     else:
         data = Book.objects.all()
-
-        context = {'book_data': data}
-        return Response()
+        serial = BookSerializer(data)
+        return Response(serial.data)
 
 
 def index(request):
