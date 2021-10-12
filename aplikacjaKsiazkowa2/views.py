@@ -328,4 +328,8 @@ def delete(request, id):
 
 
 def gugle(request):
-    return render(request, 'aplikacjaKsiazkowa2/gugleApi.html')
+    if request.method == "POST":
+        pass
+
+    else:
+        return render(request, 'aplikacjaKsiazkowa2/gugleApi.html')
