@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import datetime
+import json
 
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from rest_framework.test import APIRequestFactory
 
 from aplikacjaKsiazkowa2.models import Book
 
@@ -65,13 +67,13 @@ class BookViewTests(TestCase):
 
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
-    def test_list_book_select_languague(self):
+    def test_list_book_select_language(self):
         jezyk = "ENG"
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {'jezyk': jezyk})
         code = response.status_code
         self.assertEqual(code, 200)
         print("kod odpowiedzi: {}".format(code))
-        books_data = Book.objects.filter(languague__contains=jezyk)
+        books_data = Book.objects.filter(language__contains=jezyk)
 
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
@@ -211,6 +213,34 @@ class BookViewTests(TestCase):
         books_data = Book.objects.all()
 
         self.assertQuerysetEqual(response.context['books_data'], books_data)
+
+
+class RESTApiTests(TestCase):
+    def test_my_api_without_params(self):
+        factory = APIRequestFactory()
+        url = reverse('aplikacjaKsiazkowa2:my_api')
+        requests = factory.get(url)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content), Book.objects.all())
+
+    def test_my_api_with_author(self):
+        pass
+
+    def test_my_api_with_title(self):
+        pass
+
+    def test_my_api_with_language(self):
+        pass
+
+    def test_my_api_with_start_and_stop_date(self):
+        pass
+
+    def test_my_api_with_only_start_date(self):
+        pass
+
+    def test_my_api_with_bad_date(self):
+        pass
 
 
 

@@ -29,7 +29,7 @@ urlpatterns = [
     path('add_book', views.add_book, name='add_book'),
     path('delete/<int:id>', views.delete, name='delete'),
     path('gugle', views.gugle, name='gugle'),
-    path('my_api', views.my_api, name='my_api'),
+    path('my_api/', views.my_api, name='my_api'),
    # path('api', include(router.urls)),
    # path('api-auth', include('rest_framework.urls', namespace='rest_framework'))
 ]
