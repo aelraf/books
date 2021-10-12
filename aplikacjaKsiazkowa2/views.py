@@ -18,6 +18,36 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
 
 
+def my_api(request):
+    """
+    Widok REST API posiadający listę książek z wyszukiwaniem i filtrowaniem przy użyciu query string,
+    po tytule, autorze, języku oraz zakresie dat.
+    """
+    if 'author' in request.GET:
+        author = request.GET['author']
+        data = Book.objects.filter(author__contains=author)
+
+    elif 'title' in request.GET:
+        title = request.GET['title']
+        data = Book.objects.filter(title__contains=title)
+
+    elif 'language' in request.GET:
+        language = request.GET['language']
+        data = Book.objects.filter(language__contains=language)
+
+    elif 'start_date' in request.GET and 'end_date' in request.GET:
+        start_date = request.GET['start_date']
+        end_date = request.GET['end_date']
+        try:
+            data = Book.objects.filter(pub_date__range=(start_date, end_date))
+        except ValidationError:
+            messages.error(request, "Błąd validacji - zły format daty")
+    else:
+        data = Book.objects.all()
+
+        context = {'book_data': data}
+
+
 def index(request):
     # messages.success(request, "Dzień dobry!")
     return render(request, 'aplikacjaKsiazkowa2/index.html')

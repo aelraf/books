@@ -13,7 +13,7 @@ class Book(models.Model):
     isbn = models.CharField(max_length=15)
     pages = models.IntegerField()
     cover = models.CharField(max_length=200)
-    languague = models.CharField(max_length=5)
+    language = models.CharField(max_length=5)
 
     def __str__(self):
         return self.title + " - " + self.author
