@@ -291,10 +291,8 @@ class RESTApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/my_api/?language=PL')
         result = response.json()
 
-        print("result: {}".format(result))
-
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(result[0]['language'], books.language)
+        self.assertEqual(result[0]['language'], 'PL')
 
     def test_my_api_with_start_and_stop_date(self):
         book = Book(
@@ -336,7 +334,7 @@ class RESTApiTests(TestCase):
         result = response.json()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(result), len)
+        self.assertEqual(len(result), len(books))
 
     def test_my_api_with_bad_date(self):
         """
@@ -357,6 +355,30 @@ class RESTApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/my_api/?start_date=2010-31-51&end_date=2021-21-41')
 
         self.assertEqual(response.status_code, 500)
+
+
+class GugleApiTests(TestCase):
+    def test_gugle_get(self):
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_gugle_post_and_exist(self):
+        # co jest zwracane przez naszą metodę
+        terms = "Hobbit"
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        response = self.client.post(url, {'terms': terms})
+        code = response.status_code
+        self.assertEqual(code, 200)
+
+        # co jest zwracane przez APIGoogla
+        client = RequestsClient()
+        response_client = client.get('https://www.googleapis.com/books/v1/volumes?q=terms')
+
+        self.assertEqual(response_client.status_code, 200)
+
+        # czy dwa powyższe zbiory są równe?
+
 
 
 
