@@ -6,10 +6,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from aplikacjaKsiazkowa2.models import Book
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from .serializer import BookSerializer
 
 
@@ -18,6 +20,7 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
 
 
+@api_view(['GET', 'POST'])
 def my_api(request):
     """
     Widok REST API posiadający listę książek z wyszukiwaniem i filtrowaniem przy użyciu query string,
@@ -25,15 +28,30 @@ def my_api(request):
     """
     if 'author' in request.GET:
         author = request.GET['author']
-        data = Book.objects.filter(author__contains=author)
+        try:
+            data = Book.objects.filter(author__contains=author)
+        except Book.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response()
 
     elif 'title' in request.GET:
         title = request.GET['title']
-        data = Book.objects.filter(title__contains=title)
+        try:
+            data = Book.objects.filter(title__contains=title)
+        except Book.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response()
 
     elif 'language' in request.GET:
         language = request.GET['language']
-        data = Book.objects.filter(language__contains=language)
+        try:
+            data = Book.objects.filter(language__contains=language)
+        except Book.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response()
 
     elif 'start_date' in request.GET and 'end_date' in request.GET:
         start_date = request.GET['start_date']
@@ -42,10 +60,17 @@ def my_api(request):
             data = Book.objects.filter(pub_date__range=(start_date, end_date))
         except ValidationError:
             messages.error(request, "Błąd validacji - zły format daty")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Book.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response()
+
     else:
         data = Book.objects.all()
 
         context = {'book_data': data}
+        return Response()
 
 
 def index(request):
