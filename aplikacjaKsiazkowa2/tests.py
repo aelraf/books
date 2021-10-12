@@ -252,7 +252,7 @@ class RESTApiTests(TestCase):
         result = response.json()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(result[0]['author'], "Jan Brzechwa")
+        self.assertEqual(result[0]['author'], books.author)
 
     def test_my_api_with_title(self):
         book = Book(
@@ -265,25 +265,98 @@ class RESTApiTests(TestCase):
             language="PL"
         )
         create_book(book)
+        books = Book.objects.get(title__contains="dzieciom")
 
         client = RequestsClient()
         response = client.get('http://127.0.0.1:8000/my_api/?title=dzieciom')
         result = response.json()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(result[0]['title'], "Brzechwa dzieciom")
+        self.assertEqual(result[0]['title'], books.title)
 
     def test_my_api_with_language(self):
-        pass
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            language="PL"
+        )
+        create_book(book)
+        books = Book.objects.filter(language__contains="PL")
+
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/my_api/?language=PL')
+        result = response.json()
+
+        print("result: {}".format(result))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result[0]['language'], books.language)
 
     def test_my_api_with_start_and_stop_date(self):
-        pass
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            language="PL"
+        )
+        create_book(book)
+
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/my_api/?start_date=2010-01-01&end_date=2021-01-01')
+        result = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(result), 1)
 
     def test_my_api_with_only_start_date(self):
-        pass
+        """
+        Jeśli podamy tylko jedną z dat, to zwróci nam całą listę, bo przedział musi być obustronny.
+        """
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            language="PL"
+        )
+        create_book(book)
+        books = Book.objects.all()
+
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/my_api/?start_date=2010-01-01')
+        result = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(result), len)
 
     def test_my_api_with_bad_date(self):
-        pass
+        """
+        Sprawdzamy, czy dostaniemy AssertionError.
+        """
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            language="PL"
+        )
+        create_book(book)
+
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/my_api/?start_date=2010-31-51&end_date=2021-21-41')
+
+        self.assertEqual(response.status_code, 500)
 
 
 
