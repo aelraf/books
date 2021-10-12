@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
+from django.utils.dateparse import parse_date
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -84,6 +85,13 @@ def my_api(request):
     """
     Widok REST API posiadający listę książek z wyszukiwaniem i filtrowaniem przy użyciu query string,
     po tytule, autorze, języku oraz zakresie dat.
+
+    Parametry:
+    title - tytuł
+    author - autor
+    language - język
+    start_date - data początkowa (format: YYYY-MM-DD)
+    end_date - data końcowa (format: YYYY-MM-DD)
     """
     if 'author' in request.GET:
         print("my_api - autor: ")
@@ -117,14 +125,16 @@ def my_api(request):
 
     elif 'start_date' in request.GET and 'end_date' in request.GET:
         print("my_api - zakres dat")
-        start_date = request.GET['start_date']
-        end_date = request.GET['end_date']
         try:
+            start_date = parse_date(request.GET['start_date'])
+            end_date = parse_date(request.GET['end_date'])
+
             data = Book.objects.filter(pub_date__range=(start_date, end_date))
             serial = BookSerializer(data, many=True)
             return Response(serial.data)
         except ValidationError:
             messages.error(request, "Błąd validacji - zły format daty")
+            print("my_api - bad request dla dat.")
             return Response(status=status.HTTP_400_BAD_REQUEST)
         except Book.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)

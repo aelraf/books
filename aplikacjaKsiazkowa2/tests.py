@@ -5,9 +5,10 @@ import json
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory, RequestsClient
 
 from aplikacjaKsiazkowa2.models import Book
+from aplikacjaKsiazkowa2.views import my_api
 
 
 class BookModelClass(TestCase):
@@ -217,18 +218,60 @@ class BookViewTests(TestCase):
 
 class RESTApiTests(TestCase):
     def test_my_api_without_params(self):
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            language="PL"
+        )
+        create_book(book)
         factory = APIRequestFactory()
         url = reverse('aplikacjaKsiazkowa2:my_api')
         requests = factory.get(url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content), Book.objects.all())
 
     def test_my_api_with_author(self):
-        pass
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            language="PL"
+        )
+        create_book(book)
+        books = Book.objects.get(author__contains="Jan")
+
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/my_api/?author=Jan')
+        result = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result[0]['author'], "Jan Brzechwa")
 
     def test_my_api_with_title(self):
-        pass
+        book = Book(
+            title="Brzechwa dzieciom",
+            author="Jan Brzechwa",
+            pub_date="2011-01-01",
+            isbn="53387501243KS",
+            pages=136,
+            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            language="PL"
+        )
+        create_book(book)
+
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/my_api/?title=dzieciom')
+        result = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result[0]['title'], "Brzechwa dzieciom")
 
     def test_my_api_with_language(self):
         pass
