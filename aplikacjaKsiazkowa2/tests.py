@@ -37,6 +37,18 @@ def create_book(book):
     )
 
 
+def create_brzechwa():
+    return Book.objects.create(
+        title="Brzechwa dzieciom",
+        author="Jan Brzechwa",
+        pub_date="2011-01-01",
+        isbn="53387501243KS",
+        pages=136,
+        cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+        language="PL"
+    )
+
+
 class BookViewTests(TestCase):
     def test_index(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:index'))
@@ -127,16 +139,7 @@ class BookViewTests(TestCase):
         self.assertIs(Book.objects.filter(title=book.title).exists(), True)
 
     def test_edit_book_get_good_id(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
         response = self.client.get(url)
 
@@ -149,16 +152,7 @@ class BookViewTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_edit_book_post(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
         response = self.client.post(url, {
             'title': "Brzechwa misiom i innym",
@@ -175,16 +169,7 @@ class BookViewTests(TestCase):
         self.assertIs(wynik, True)
 
     def test_delete_book_get_good_id(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         url = reverse('aplikacjaKsiazkowa2:delete', kwargs={'id': 1})
         response = self.client.get(url)
 
@@ -197,16 +182,7 @@ class BookViewTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_delete_book_past(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         url = reverse('aplikacjaKsiazkowa2:delete', kwargs={'id': 1})
         response = self.client.get(url)
 
@@ -218,16 +194,7 @@ class BookViewTests(TestCase):
 
 class RESTApiTests(TestCase):
     def test_my_api_without_params(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         factory = APIRequestFactory()
         url = reverse('aplikacjaKsiazkowa2:my_api')
         requests = factory.get(url)
@@ -235,16 +202,7 @@ class RESTApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_my_api_with_author(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         books = Book.objects.get(author__contains="Jan")
 
         client = RequestsClient()
@@ -255,16 +213,7 @@ class RESTApiTests(TestCase):
         self.assertEqual(result[0]['author'], books.author)
 
     def test_my_api_with_title(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         books = Book.objects.get(title__contains="dzieciom")
 
         client = RequestsClient()
@@ -275,16 +224,7 @@ class RESTApiTests(TestCase):
         self.assertEqual(result[0]['title'], books.title)
 
     def test_my_api_with_language(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         books = Book.objects.filter(language__contains="PL")
 
         client = RequestsClient()
@@ -295,16 +235,7 @@ class RESTApiTests(TestCase):
         self.assertEqual(result[0]['language'], 'PL')
 
     def test_my_api_with_start_and_stop_date(self):
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
 
         client = RequestsClient()
         response = client.get('http://127.0.0.1:8000/my_api/?start_date=2010-01-01&end_date=2021-01-01')
@@ -317,16 +248,7 @@ class RESTApiTests(TestCase):
         """
         Jeśli podamy tylko jedną z dat, to zwróci nam całą listę, bo przedział musi być obustronny.
         """
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
         books = Book.objects.all()
 
         client = RequestsClient()
@@ -340,16 +262,7 @@ class RESTApiTests(TestCase):
         """
         Sprawdzamy, czy dostaniemy AssertionError.
         """
-        book = Book(
-            title="Brzechwa dzieciom",
-            author="Jan Brzechwa",
-            pub_date="2011-01-01",
-            isbn="53387501243KS",
-            pages=136,
-            cover="https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            language="PL"
-        )
-        create_book(book)
+        book = create_brzechwa()
 
         client = RequestsClient()
         response = client.get('http://127.0.0.1:8000/my_api/?start_date=2010-31-51&end_date=2021-21-41')
@@ -373,9 +286,14 @@ class GugleApiTests(TestCase):
 
         # co jest zwracane przez APIGoogla
         client = RequestsClient()
-        response_client = client.get('https://www.googleapis.com/books/v1/volumes?q=terms')
+        url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + terms
+        print("URL looking: {}".format(url_looking))
+        response_gugiel = client.get(url_looking)
+        print("response gugiel: {}".format(response_gugiel.request))
+        print("response: {}".format(response_gugiel))
+        print("nagłówek odpowiedzi: {}".format(response_gugiel.headers))
 
-        self.assertEqual(response_client.status_code, 200)
+        self.assertEqual(response_gugiel.status_code, 200)
 
         # czy dwa powyższe zbiory są równe?
 
