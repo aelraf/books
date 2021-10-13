@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import datetime
-import json
 
 import requests
 from django.test import TestCase
@@ -280,19 +279,18 @@ class GugleApiTests(TestCase):
     def test_gugle_post_and_exist(self):
         # co jest zwracane przez naszą metodę
         terms = "Hobbit"
-        # url = reverse('aplikacjaKsiazkowa2:gugle')
-        # response = self.client.post(url, {'terms': terms})
-        # code = response.status_code
-        # self.assertEqual(code, 200)
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        response = self.client.post(url, {'terms': terms})
+        code = response.status_code
+        self.assertEqual(code, 200)
 
         # co jest zwracane przez APIGoogla
-        client = RequestsClient()
         url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + terms
         s = requests.Session()
         response_gugiel = s.get(url_looking)
 
-        print("response gugiel: \n")
-        print(response_gugiel.content)
+        # print("response gugiel: \n")
+        # print(response_gugiel.content)
 
         self.assertEqual(response_gugiel.status_code, 200)
 
@@ -300,5 +298,15 @@ class GugleApiTests(TestCase):
         # self.assertJSONEqual(response, response_gugiel)
         # self.assertQuerysetEqual(response, response_gugiel)
 
+    def test_gugle_post_not_exist(self):
+        # terms = "Buzikawoeslaoeasdzasakcemolesowiatretabialozeneorelion"
+        terms = ""
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        response = self.client.post(url, {'terms': terms})
+        print("test_gugle_post_not_exist\n")
+        print(response.context)
+        code = response.status_code
+        print(code)
+        self.assertEqual(code, 200)
 
 
