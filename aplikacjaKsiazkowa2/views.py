@@ -348,87 +348,36 @@ def gugle(request):
                         pub_date += "-01-01"
                     elif 6 <= len(pub_date) < 8:
                         pub_date += "-01"
-                    if volume.get("pageCount"):
+                    if volume.get("pageCount") is not None:
                         pages = volume.get("pageCount")
                     else:
                         pages = None
-                    print("book: {}, {}, {}, {} ".format(title, author, pub_date, pages))
+
+                    if volume.get('imageLinks') is not None:
+                        # print("okładka: {}".format(volume['imageLinks']))
+                        cover = volume.get('imageLinks')['thumbnail']
+                        # print("cover: {}".format(cover))
+                    else:
+                        cover = None
+                    if volume.get('language') is not None:
+                        language = volume['language']
+                        # print('language: {}'.format(language))
+                    else:
+                        language = None
+                    print("book: {}, {}, {}, {}, {}, {} ".format(title, author, pub_date, pages, cover, language))
 
                     new_book = Book(
                         title=title,
                         author=author,
                         pub_date=pub_date,
                         pages=pages,
-                        #cover=cover,
+                        cover=cover,
+                        language=language
                     )
                     new_book.save()
 
             messages.success(request, "Książki dodano do listy.")
             return render(request, 'aplikacjaKsiazkowa2/index.html')
-
-            """
-            session = requests.Session()
-            terms = request.POST.get('terms')
-            url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + terms
-            response = session.get(url_looking)
-            code = response.status_code
-            if code == 200 and terms is not None:
-                assert code == 200, "gugle POST - Kod odpowiedzi: 200"
-
-                books_data = response.json()
-                if books_data['items'] is not None:
-                    print("gugle - mamy items.")
-                    for book in books_data['items']:
-                        print("id book: {}".format(book['id']))
-                        volume = book['volumeInfo']
-                        title = volume['title']
-                        author = volume['authors']
-                        pub_date = volume['publishedDate']
-                        if len(pub_date) < 8:
-                            pub_date += "-01"
-
-                        i = volume['industryIdentifiers']
-                        if i[0]['type'] == 'ISBN_13':
-                            print("isbn: {}".format(i[0]['type']))
-                            isbn = i[0]['identifier']
-                        else:
-                            isbn = None
-                        if volume['pageCount'] > 0:
-                             print('strony: {}'.format(volume['pageCount']))
-                             pages = volume['pageCount']
-                        else:
-                             pages = None
-                        #if volume['imageLinks'] is not None:
-                        #     print("okładka: {}".format(volume['imageLinks']))
-                        #     cover = volume['thumbnail']
-                        #     print("cover: {}".format(cover))
-                        if volume['language'] is not None:
-                            language = volume['language']
-                            print('language: {}'.format(language))
-                        print("volume info: {}, {}, {}, {}, {} \n"
-                              .format(title, author, pub_date, isbn, pages))
-
-                        new_book = Book(
-                            title=title,
-                            author=author,
-                            pub_date=pub_date,
-                            pages=pages,
-                            cover=cover,
-                        )
-                        new_book.save()
-
-                else:
-                    assert books_data['items'], "Nie mamy items"
-
-                messages.success(request, "Książki dodano do listy.")
-                return render(request, 'aplikacjaKsiazkowa2/index.html')
-
-            else:
-                print(" terms is None!!!")
-                assert code != 200, "gule POST - Kod odpowiedzi jest różny od 200"
-                messages.warning(request, "Błąd - kod odpowiedzi: {}".format(code))
-                return render(request, 'aplikacjaKsiazkowa2/gugleApi.html')
-            """
 
         else:
             messages.warning(request, "złe zapytanie!")
