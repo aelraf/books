@@ -251,55 +251,59 @@ def lista(request):
     if request.method == "POST":
         data = Book.objects.order_by('id')
 
-        try:
+        if 'd1' in request.POST and 'd2' in request.POST:
             d1 = request.POST.get('d1')
             d2 = request.POST.get('d2')
+            print("Lista - wyszukiwanie po przedziale daty: ")
+            print('\n lista - metoda POST, d1= {}, d2= {}'.format(d1, d2))
+            try:
+                data = Book.objects.filter(pub_date__range=(d1, d2))
+            except ValidationError:
+                messages.warning(request, "ValidationError - zła data! Podaj prawidłowy zakres!")
+            else:
+                if not data.exists():
+                    messages.warning(request, "Pusty zakres przeszukiwania dat!")
+                context = {'books_data': data}
+                return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+
+        if 'language' in request.POST:
             jezyk = request.POST.get('language')
+            print('Lista - Wyszukiwanie po języku: {}  \n'.format(jezyk))
+            try:
+                data = Book.objects.filter(language__contains=jezyk)
+            except ValidationError:
+                messages.warning(request, "ValidationError - zły język! Podaj prawidłowe dane!")
+            else:
+                if not data.exists():
+                    messages.warning(request, "Brak książek tego języka")
+                context = {'books_data': data}
+                return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+
+        if 'title' in request.POST:
             tytul = request.POST.get('title')
+            print('Lista - wyszukiwanie po tytule: {} \n'.format(tytul))
+            try:
+                data = Book.objects.filter(title__contains=tytul)
+            except ValidationError:
+                messages.warning(request, "ValidationError - zły tytuł! Podaj prawidłowe dane!")
+            else:
+                if not data.exists():
+                    messages.warning(request, "Brak książek o tym tytule")
+                context = {'books_data': data}
+                return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+
+        if 'author' in request.POST:
             autor = request.POST.get('author')
-        except TypeError:
-            messages.error(request, "Type error - brak wartości wyszukiwania")
-        else:
-            if d1 is not None and d2 is not None:
-                print("Lista - wyszukiwanie po przedziale daty: ")
-                print('\n lista - metoda POST, d1= {}, d2= {}'.format(d1, d2))
-                try:
-                    data = Book.objects.filter(pub_date__range=(d1, d2))
-                except ValidationError:
-                    messages.warning(request, "ValidationError - zła data! Podaj prawidłowy zakres!")
-                else:
-                    if not data.exists():
-                        messages.warning(request, "Pusty zakres przeszukiwania dat!")
-
-            if jezyk is not None:
-                print('Lista - Wyszukiwanie po języku: {} \n'.format(jezyk))
-                try:
-                    data = Book.objects.filter(language__contains=jezyk)
-                except ValidationError:
-                    messages.warning(request, "ValidationError - zły język! Podaj prawidłowe dane!")
-                else:
-                    if not data.exists():
-                        messages.warning(request, "Brak książek tego języka")
-
-            if tytul is not None:
-                print('Lista - wyszukiwanie po tytule: {} \n'.format(tytul))
-                try:
-                    data = Book.objects.filter(title__contains=tytul)
-                except ValidationError:
-                    messages.warning(request, "ValidationError - zły tytuł! Podaj prawidłowe dane!")
-                else:
-                    if not data.exists():
-                        messages.warning(request, "Brak książek o tym tytule")
-
-            if autor is not None:
-                print("lista - wyszukiwanie po autorze: {} \n ".format(autor))
-                try:
-                    data = Book.objects.filter(author__contains=autor)
-                except ValidationError:
-                    messages.warning(request, "ValidationError - zły autor! Podaj prawidłowe dane!")
-                else:
-                    if not data.exists():
-                        messages.warning(request, "Brak książek tego autora")
+            print("lista - wyszukiwanie po autorze: {} \n ".format(autor))
+            try:
+                data = Book.objects.filter(author__contains=autor)
+            except ValidationError:
+                messages.warning(request, "ValidationError - zły autor! Podaj prawidłowe dane!")
+            else:
+                if not data.exists():
+                    messages.warning(request, "Brak książek tego autora")
+                context = {'books_data': data}
+                return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
 
         context = {'books_data': data}
         print('\n lista - POST - koniec \n')

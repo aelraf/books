@@ -82,23 +82,29 @@
                 Data początkowa:<input type="date" class="form-control" id="d1" name="d1"/>
                 Data końcowa:<input type="date" class="form-control" id="d2" name="d2"/>
             </div>
+        </form>
+        <form action="{% url 'aplikacjaKsiazkowa2:lista' %}" method="POST" >
             <br>
             <div>
             {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Wyszukaj tytuł</button><br>
-                <input type="text" class="form-control" id="t_search" name="title"/>
+                <input type="text" class="form-control" id="t_search" name="title" />
             </div>
+        </form>
             <br>
+        <form action="{% url 'aplikacjaKsiazkowa2:lista' %}" method="POST" >
             <div>
             {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Wyszukaj autora</button><br>
-                <input type="text" class="form-control" id="a_search" name="author"/>
+                <input type="text" class="form-control" id="a_search" name="author" />
             </div>
+        </form>
             <br>
+        <form action="{% url 'aplikacjaKsiazkowa2:lista' %}" method="POST" >
             <div>
             {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Wyszukaj język</button><br>
-                <input type="text" class="form-control" id="l_search" name="language"/>
+                <input type="text" class="form-control" id="l_search" name="language" />
             </div>
             <br>
         </form>

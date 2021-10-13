@@ -61,6 +61,7 @@ class BookViewTests(TestCase):
         self.assertQuerysetEqual(response.context['books_data'], [])
 
     def test_list_book(self):
+        create_brzechwa()
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
         self.assertEqual(response.status_code, 200)
         books_data = Book.objects.order_by('id')
@@ -68,6 +69,7 @@ class BookViewTests(TestCase):
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
     def test_list_book_date_between_d1_and_d2(self):
+        create_brzechwa()
         d_p = datetime.date(1999, 1, 1)
         d_k = datetime.date.today()
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {
@@ -81,7 +83,8 @@ class BookViewTests(TestCase):
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
     def test_list_book_select_language(self):
-        jezyk = "ENG"
+        create_brzechwa()
+        jezyk = "pl"
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {'jezyk': jezyk})
         code = response.status_code
         self.assertEqual(code, 200)
@@ -91,7 +94,8 @@ class BookViewTests(TestCase):
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
     def test_list_book_select_title(self):
-        tytul = "Hobbit"
+        create_brzechwa()
+        tytul = "Brzechwa"
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {'tytul': tytul})
         code = response.status_code
         self.assertEqual(code, 200)
@@ -101,12 +105,13 @@ class BookViewTests(TestCase):
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
     def test_list_book_select_author(self):
+        create_brzechwa()
         autor = "Jan"
         response = self.client.post(reverse('aplikacjaKsiazkowa2:lista'), {'autor': autor})
         code = response.status_code
         self.assertEqual(code, 200)
         print("kod odpowiedzi: {}".format(code))
-        books_data = Book.objects.filter(title__contains=autor)
+        books_data = Book.objects.filter(author__contains=autor)
 
         self.assertQuerysetEqual(response.context['books_data'], books_data)
 
@@ -305,8 +310,8 @@ class GugleApiTests(TestCase):
         terms = ""
         url = reverse('aplikacjaKsiazkowa2:gugle')
         response = self.client.post(url, {'terms': terms})
-        print("\n test_gugle_post_not_exist\n")
-        print(response.context)
+        # print("\n test_gugle_post_not_exist\n")
+        # print(response.context)
         code = response.status_code
         print(code)
 
