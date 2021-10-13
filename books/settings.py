@@ -168,10 +168,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 # dla Heroku 20:44 (v10)
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
-)
+#PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+#STATICFILES_DIRS = (
+#    os.path.join(PROJECT_ROOT, 'static'),
+#)
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
