@@ -9,6 +9,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.utils.dateparse import parse_date
+from django.utils.datetime_safe import date
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -332,6 +333,40 @@ def delete(request, id):
 def gugle(request):
     if request.method == "POST":
         if 'terms' in request.POST:
+            terms = request.POST.get('terms')
+            url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + terms
+            response = requests.get(url_looking)
+            if response.status_code == 200:
+                print("Status code == 200")
+                books_data = response.json()
+                for book in books_data['items']:
+                    volume = book['volumeInfo']
+                    title = volume['title']
+                    author = volume['authors']
+                    pub_date = volume['publishedDate']
+                    if 4 <= len(pub_date) < 6:
+                        pub_date += "-01-01"
+                    elif 6 <= len(pub_date) < 8:
+                        pub_date += "-01"
+                    if volume.get("pageCount"):
+                        pages = volume.get("pageCount")
+                    else:
+                        pages = None
+                    print("book: {}, {}, {}, {} ".format(title, author, pub_date, pages))
+
+                    new_book = Book(
+                        title=title,
+                        author=author,
+                        pub_date=pub_date,
+                        pages=pages,
+                        #cover=cover,
+                    )
+                    new_book.save()
+
+            messages.success(request, "Książki dodano do listy.")
+            return render(request, 'aplikacjaKsiazkowa2/index.html')
+
+            """
             session = requests.Session()
             terms = request.POST.get('terms')
             url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + terms
@@ -344,21 +379,27 @@ def gugle(request):
                 if books_data['items'] is not None:
                     print("gugle - mamy items.")
                     for book in books_data['items']:
+                        print("id book: {}".format(book['id']))
                         volume = book['volumeInfo']
                         title = volume['title']
                         author = volume['authors']
                         pub_date = volume['publishedDate']
+                        if len(pub_date) < 8:
+                            pub_date += "-01"
+
                         i = volume['industryIdentifiers']
-                        if i:
-                            if i['type'] == 'ISBN_13':
-                                isbn = volume['identifier']
+                        if i[0]['type'] == 'ISBN_13':
+                            print("isbn: {}".format(i[0]['type']))
+                            isbn = i[0]['identifier']
                         else:
                             isbn = None
-                        if volume['pageCount']:
-                            pages = volume['pageCount']
+                        if volume['pageCount'] > 0:
+                             print('strony: {}'.format(volume['pageCount']))
+                             pages = volume['pageCount']
                         else:
-                            pages = None
-                        # if volume['imageLinks'] is not None:
+                             pages = None
+                        #if volume['imageLinks'] is not None:
+                        #     print("okładka: {}".format(volume['imageLinks']))
                         #     cover = volume['thumbnail']
                         #     print("cover: {}".format(cover))
                         if volume['language'] is not None:
@@ -366,17 +407,29 @@ def gugle(request):
                             print('language: {}'.format(language))
                         print("volume info: {}, {}, {}, {}, {} \n"
                               .format(title, author, pub_date, isbn, pages))
+
+                        new_book = Book(
+                            title=title,
+                            author=author,
+                            pub_date=pub_date,
+                            pages=pages,
+                            cover=cover,
+                        )
+                        new_book.save()
+
                 else:
                     assert books_data['items'], "Nie mamy items"
-                    print("gugle - nie mamy items")
 
                 messages.success(request, "Książki dodano do listy.")
                 return render(request, 'aplikacjaKsiazkowa2/index.html')
+
             else:
                 print(" terms is None!!!")
                 assert code != 200, "gule POST - Kod odpowiedzi jest różny od 200"
                 messages.warning(request, "Błąd - kod odpowiedzi: {}".format(code))
                 return render(request, 'aplikacjaKsiazkowa2/gugleApi.html')
+            """
+
         else:
             messages.warning(request, "złe zapytanie!")
             return Response(status=status.HTTP_400_BAD_REQUEST)

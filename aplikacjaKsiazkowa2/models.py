@@ -10,10 +10,10 @@ class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
     pub_date = models.DateField('data publikacji')
-    isbn = models.CharField(max_length=15)
-    pages = models.IntegerField()
-    cover = models.CharField(max_length=200)
-    language = models.CharField(max_length=5)
+    isbn = models.CharField(max_length=15, null=True, blank=True)
+    pages = models.IntegerField(null=True, blank=True)
+    cover = models.CharField(max_length=200, null=True, blank=True)
+    language = models.CharField(max_length=5, null=True, blank=True)
 
     def __str__(self):
         return self.title + " - " + self.author

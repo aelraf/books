@@ -303,7 +303,7 @@ class GugleApiTests(TestCase):
         terms = ""
         url = reverse('aplikacjaKsiazkowa2:gugle')
         response = self.client.post(url, {'terms': terms})
-        print("test_gugle_post_not_exist\n")
+        print("\n test_gugle_post_not_exist\n")
         print(response.context)
         code = response.status_code
         print(code)
