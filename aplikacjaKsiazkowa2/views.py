@@ -342,12 +342,22 @@ def gugle(request):
                 for book in books_data['items']:
                     volume = book['volumeInfo']
                     title = volume['title']
-                    author = volume['authors']
+                    author = volume['authors'][0]
                     pub_date = volume['publishedDate']
                     if 4 <= len(pub_date) < 6:
                         pub_date += "-01-01"
                     elif 6 <= len(pub_date) < 8:
                         pub_date += "-01"
+
+                    i = volume['industryIdentifiers']
+                    for j in range(len(i)):
+                        if i[j]['type'] == 'ISBN_13':
+                            print("\n isbn: {}, {}".format(i[j]['type'], i[j]['identifier']))
+                            isbn = i[j]['identifier']
+                            break
+                        else:
+                            isbn = None
+
                     if volume.get("pageCount") is not None:
                         pages = volume.get("pageCount")
                     else:
@@ -364,12 +374,13 @@ def gugle(request):
                         # print('language: {}'.format(language))
                     else:
                         language = None
-                    print("book: {}, {}, {}, {}, {}, {} ".format(title, author, pub_date, pages, cover, language))
+                    print("book: {}, {}, {}, {}, {}, {}, {} ".format(title, author, pub_date, isbn, pages, cover, language))
 
                     new_book = Book(
                         title=title,
                         author=author,
                         pub_date=pub_date,
+                        isbn=isbn,
                         pages=pages,
                         cover=cover,
                         language=language
