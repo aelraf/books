@@ -282,21 +282,23 @@ class GugleApiTests(TestCase):
         url = reverse('aplikacjaKsiazkowa2:gugle')
         response = self.client.post(url, {'terms': terms})
         code = response.status_code
+        books_data_i = Book.objects.count()
+
         self.assertEqual(code, 200)
 
         # co jest zwracane przez APIGoogla
         url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + terms
         s = requests.Session()
         response_gugiel = s.get(url_looking)
-
-        # print("response gugiel: \n")
-        # print(response_gugiel.content)
+        gugiel_i = 0
+        for g in response_gugiel.json()['items']:
+            gugiel_i += 1
+        # print("\n count book: {}".format(books_data_i))
+        # print("\n gugiel: {}".format(gugiel_i))
 
         self.assertEqual(response_gugiel.status_code, 200)
-
-        # czy dwa powyższe zbiory są równe?
-        # self.assertJSONEqual(response, response_gugiel)
-        # self.assertQuerysetEqual(response, response_gugiel)
+        # czy zbiory są równoliczne
+        self.assertIs(books_data_i, gugiel_i)
 
     def test_gugle_post_not_exist(self):
         # terms = "Buzikawoeslaoeasdzasakcemolesowiatretabialozeneorelion"
@@ -307,6 +309,7 @@ class GugleApiTests(TestCase):
         print(response.context)
         code = response.status_code
         print(code)
+
         self.assertEqual(code, 200)
 
 
