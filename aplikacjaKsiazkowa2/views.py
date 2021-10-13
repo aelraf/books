@@ -346,7 +346,12 @@ def gugle(request):
                 for book in books_data['items']:
                     volume = book['volumeInfo']
                     title = volume['title']
-                    author = volume['authors'][0]
+
+                    if volume.get('authors') is not None:
+                        author = volume['authors'][0]
+                    else:
+                        author = "Autorzy nieznani"
+
                     pub_date = volume['publishedDate']
                     if 4 <= len(pub_date) < 6:
                         pub_date += "-01-01"
