@@ -2,6 +2,7 @@
 import datetime
 import json
 
+import requests
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -279,24 +280,25 @@ class GugleApiTests(TestCase):
     def test_gugle_post_and_exist(self):
         # co jest zwracane przez naszą metodę
         terms = "Hobbit"
-        url = reverse('aplikacjaKsiazkowa2:gugle')
-        response = self.client.post(url, {'terms': terms})
-        code = response.status_code
-        self.assertEqual(code, 200)
+        # url = reverse('aplikacjaKsiazkowa2:gugle')
+        # response = self.client.post(url, {'terms': terms})
+        # code = response.status_code
+        # self.assertEqual(code, 200)
 
         # co jest zwracane przez APIGoogla
         client = RequestsClient()
         url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + terms
-        print("URL looking: {}".format(url_looking))
-        response_gugiel = client.get(url_looking)
-        print("response gugiel: {}".format(response_gugiel.request))
-        print("response: {}".format(response_gugiel))
-        print("nagłówek odpowiedzi: {}".format(response_gugiel.headers))
+        s = requests.Session()
+        response_gugiel = s.get(url_looking)
+
+        print("response gugiel: \n")
+        print(response_gugiel.content)
 
         self.assertEqual(response_gugiel.status_code, 200)
 
         # czy dwa powyższe zbiory są równe?
-
+        # self.assertJSONEqual(response, response_gugiel)
+        # self.assertQuerysetEqual(response, response_gugiel)
 
 
 
