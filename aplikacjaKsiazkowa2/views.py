@@ -2,14 +2,14 @@
 import datetime
 
 import requests
-from django.core import serializers
+# from django.core import serializers
 from django.core.exceptions import ValidationError
-from django.http import HttpResponseRedirect
+# from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
+# from django.urls import reverse
 from django.contrib import messages
 from django.utils.dateparse import parse_date
-from django.utils.datetime_safe import date
+# from django.utils.datetime_safe import date
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -17,13 +17,14 @@ from aplikacjaKsiazkowa2.models import Book
 
 from rest_framework import viewsets, status
 
-from . import serializer
+# from . import serializer
 from .serializer import BookSerializer
 
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
 
 '''
 @api_view(['GET', 'POST'])
@@ -383,7 +384,8 @@ def gugle(request):
                         # print('language: {}'.format(language))
                     else:
                         language = None
-                    print("book: {}, {}, {}, {}, {}, {}, {} ".format(title, author, pub_date, isbn, pages, cover, language))
+                    print("book: {}, {}, {}, {}, {}, {}, {} "
+                          .format(title, author, pub_date, isbn, pages, cover, language))
 
                     new_book = Book(
                         title=title,
