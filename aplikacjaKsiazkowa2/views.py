@@ -26,64 +26,6 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
 
 
-'''
-@api_view(['GET', 'POST'])
-def my_api(request):
-    try:
-        d1 = request.GET.get('start_date')
-        d2 = request.GET.get('end_date')
-        jezyk = request.GET.get('language')
-        tytul = request.GET.get('title')
-        autor = request.GET.get('author')
-    except TypeError:
-        messages.error(request, "Type error - brak wartości wyszukiwania")
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    if d1 is not None and d2 is not None:
-        try:
-            data = Book.objects.filter(pub_date__range=(d1, d2))
-            serial = BookSerializer(data, many=True)
-            return Response(serial.data)
-        except ValidationError:
-            messages.error(request, "Błąd validacji - zły format daty")
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        except Book.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    elif jezyk is not None:
-        print('jezyk: {}'.format(jezyk))
-        try:
-            data = Book.objects.filter(language__contains=jezyk)
-            serial = BookSerializer(data, many=True)
-            return Response(serial.data)
-        except Book.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    elif tytul is not None:
-        print('tytul: {}'.format(tytul))
-        try:
-            data = Book.objects.filter(title__contains=tytul)
-            serial = BookSerializer(data, many=True)
-            return Response(serial.data)
-        except Book.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    elif autor is not None:
-        print('autor: {}'.format(autor))
-        try:
-            data = Book.objects.filter(author__contains=autor)
-            serial = BookSerializer(data, many=True)
-            return Response(serial.data)
-        except Book.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    else:
-        data = Book.objects.order_by('id')
-        serial = BookSerializer(data, many=True)
-        return Response(serial.data)
-'''
-
-
 @api_view(['GET', 'POST'])
 def my_api(request):
     """
