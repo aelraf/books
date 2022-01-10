@@ -10,15 +10,25 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.utils.dateparse import parse_date
 # from django.utils.datetime_safe import date
+from django.views import generic
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
-from aplikacjaKsiazkowa2.models import Book
-
 from rest_framework import viewsets, status
 
+
+from aplikacjaKsiazkowa2.models import Book
 # from . import serializer
 from .serializer import BookSerializer
+
+
+class IndexView(generic.ListView):
+    template_name = 'aplikacjaKsiazkowa2/index.html'
+
+
+def index(request):
+    # messages.success(request, "Dzień dobry!")
+    return render(request, 'aplikacjaKsiazkowa2/index.html')
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -95,11 +105,6 @@ def my_api(request):
             messages.error(request, "Błąd - Attribute error w metodzie my_api")
             print("Blad - Attribute error w metodzie my_api")
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-def index(request):
-    # messages.success(request, "Dzień dobry!")
-    return render(request, 'aplikacjaKsiazkowa2/index.html')
 
 
 def edit(request, id):
@@ -188,6 +193,11 @@ def add_book(request):
     print("add_book - GET")
     print(datetime.datetime.now())
     return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+
+
+class ListBookView(generic.ListView):
+    template_name = 'aplikacjaKsiazkowa2/lista.html'
+    context_object_name = 'books_data'
 
 
 def lista(request):
