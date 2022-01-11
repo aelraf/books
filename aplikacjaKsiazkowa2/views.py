@@ -23,6 +23,7 @@ from .serializer import BookSerializer
 
 
 class IndexView(generic.ListView):
+    """ widok generyczny w zamian za widok index(request) """
     template_name = 'aplikacjaKsiazkowa2/index.html'
 
 
@@ -32,6 +33,7 @@ def index(request):
 
 
 class BookViewSet(viewsets.ModelViewSet):
+    """ początek widoku generycznego REST API za widok my_api """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
@@ -105,6 +107,25 @@ def my_api(request):
             messages.error(request, "Błąd - Attribute error w metodzie my_api")
             print("Blad - Attribute error w metodzie my_api")
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class EditView(generic.DetailView):
+    """ widok generyczny w zamian za widok edit(request, id) """
+    model = Book
+    context_object_name = "books_data"
+    template_name = 'aplikacjaKsiazkowa2/edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['book_data'] = Book.objects.filter(id=id)
+
+        return context
+
+    def get_queryset(self):
+        return Book.objects.filter(id=self.id)
+
+    def post(self, request):
+        pass
 
 
 def edit(request, id):
@@ -312,6 +333,7 @@ def gugle(request):
                         pub_date += "-01"
 
                     i = volume['industryIdentifiers']
+                    isbn = 0
                     for j in range(len(i)):
                         if i[j]['type'] == 'ISBN_13':
                             print("\n isbn: {}, {}".format(i[j]['type'], i[j]['identifier']))
