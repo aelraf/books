@@ -16,8 +16,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 
-
-from aplikacjaKsiazkowa2.models import Book
+from aplikacjaKsiazkowa2.models import Book, Publisher
 # from . import serializer
 from .serializer import BookSerializer
 
@@ -107,6 +106,19 @@ def my_api(request):
             messages.error(request, "Błąd - Attribute error w metodzie my_api")
             print("Blad - Attribute error w metodzie my_api")
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+""" testowe widoki do sprawdzenia idei - na podstawie dokumentacji"""
+
+
+class PublisherListView(generic.ListView):
+    model = Publisher
+
+# https://docs.djangoproject.com/pl/4.0/ref/class-based-views/
+
+
+# https://docs.djangoproject.com/pl/4.0/topics/class-based-views/intro/
+""" koniec testowych widoków """
 
 
 class EditView(generic.DetailView):
