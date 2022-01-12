@@ -113,11 +113,22 @@ def my_api(request):
 
 class PublisherListView(generic.ListView):
     model = Publisher
+    context_object_name = 'my_favorite_publishers'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['book_list'] = Book.objects.all()
+        return context
 
 # https://docs.djangoproject.com/pl/4.0/ref/class-based-views/
-
-
 # https://docs.djangoproject.com/pl/4.0/topics/class-based-views/intro/
+
+
+class PublisherDetailView(generic.DetailView):
+    context_object_name = 'publisher'
+    queryset = Publisher.objects.all()
+
+
 """ koniec testowych widoków """
 
 
