@@ -3,20 +3,23 @@ import datetime
 
 import requests
 # from django.core import serializers
+from django import forms
 from django.core.exceptions import ValidationError
 # from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 # from django.urls import reverse
 from django.contrib import messages
+from django.utils import timezone
 from django.utils.dateparse import parse_date
 # from django.utils.datetime_safe import date
 from django.views import generic
+from django.views.generic import FormView
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 
-from aplikacjaKsiazkowa2.models import Book, Publisher
+from aplikacjaKsiazkowa2.models import Book, Publisher, Author
 # from . import serializer
 from .serializer import BookSerializer
 
@@ -115,18 +118,78 @@ class PublisherListView(generic.ListView):
     model = Publisher
     context_object_name = 'my_favorite_publishers'
 
+
+# https://docs.djangoproject.com/pl/4.0/ref/class-based-views/
+# https://docs.djangoproject.com/pl/4.0/topics/class-based-views/intro/
+# https://docs.djangoproject.com/pl/4.0/topics/db/queries/
+
+
+class PublisherDetailView(generic.DetailView):
+    model = Publisher
+    context_object_name = 'publisher'
+    queryset = Publisher.objects.all()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['book_list'] = Book.objects.all()
         return context
 
-# https://docs.djangoproject.com/pl/4.0/ref/class-based-views/
-# https://docs.djangoproject.com/pl/4.0/topics/class-based-views/intro/
+
+class BookListView(generic.ListView):
+    queryset = Book.objects.order_by('-pub_date')
+    context_object_name = 'book_list'
 
 
-class PublisherDetailView(generic.DetailView):
-    context_object_name = 'publisher'
-    queryset = Publisher.objects.all()
+class AcmeBookListView(generic.ListView):
+    context_object_name = 'book_list'
+    queryset = Book.objects.filter(publisher__name='ACME Publishing')
+    template_name = 'books/acme_list.html'
+
+
+class PublisherBookListView(generic.ListView):
+    template_name = 'books/books_by_publisher.html'
+
+    def get_queryset(self):
+        self.publisher = get_object_or_404(Publisher, name=self.kwargs['publisher'])
+        return Book.objects.filter(publisher=self.publisher)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['publisher'] = self.publisher
+
+        return context
+
+
+class AuthorDetailView(generic.DetailView):
+    queryset = Author.objects.all()
+
+    def get_object(self):
+        obj = super().get_object()
+
+        obj.last_accessed = timezone.now()
+        obj.save()
+        return obj
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField()
+    message = forms.CharField(widget=forms.Textarea)
+
+    def send_email(self):
+        # wysyłamy maila używając słownika self.cleaned_data
+        pass
+
+
+class ContactFormView(FormView):
+    """lepsza wersja powyższego formularza kontaktowego """
+    template_name = 'contact.html'
+    form_class = ContactForm
+    success_url = '/thanks/'
+
+    def form_valid(self, form):
+        # ta metoda jest wywoływana, kiedy są POSTowane poprawne dane
+        form.send_email()
+        return super().form_valid(form)
 
 
 """ koniec testowych widoków """

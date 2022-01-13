@@ -46,6 +46,7 @@ class Author(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField()
     headshot = models.ImageField(upload_to='author_headshots')
+    last_accessed = models.DateTimeField()
 
     def __str__(self):
         return self.name
