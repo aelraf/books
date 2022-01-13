@@ -9,11 +9,12 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404
 # from django.urls import reverse
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 # from django.utils.datetime_safe import date
 from django.views import generic
-from django.views.generic import FormView
+from django.views.generic import FormView, CreateView, UpdateView, DeleteView
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -190,6 +191,24 @@ class ContactFormView(FormView):
         # ta metoda jest wywoływana, kiedy są POSTowane poprawne dane
         form.send_email()
         return super().form_valid(form)
+
+# poniższe trzy klasy odpowiadają za tworzenie, aktualizację i usuwanie autorów z bazy
+# dokładnie taki sam mechanizm można zastosować do książek
+
+
+class AuthorCreateView(CreateView):
+    model = Author
+    fields = ['name']
+
+
+class AuthorUpdateView(UpdateView):
+    model = Author
+    fields = ['name']
+
+
+class AuthorDeleteView(DeleteView):
+    model = Author
+    success_url = reverse_lazy('author-list')
 
 
 """ koniec testowych widoków """
