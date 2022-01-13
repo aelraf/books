@@ -7,16 +7,17 @@ from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 # from django.http import HttpResponseRedirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-# from django.urls import reverse
+from django.urls import reverse
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 # from django.utils.datetime_safe import date
-from django.views import generic
+from django.views import generic, View
 from django.views.generic import FormView, CreateView, UpdateView, DeleteView
+from django.views.generic.detail import SingleObjectMixin
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -242,6 +243,20 @@ class AuthorUpdateView(UpdateView):
 class AuthorDeleteView(DeleteView):
     model = Author
     success_url = reverse_lazy('author-list')
+
+
+class RecordInterestView(SingleObjectMixin, View):
+    """ rejestruje zainteresowanie bieżącego użytkownika autorem """
+    model = Author
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+
+        # patrzymy na autora, którym jesteśmy zainteresowani
+        self.object = self.get_object()
+        # zainteresowanie rejestrujemy tutaj, w linii powyżej
+        return HttpResponseRedirect(reverse('author-detail', kwargs={'pk': self.object.pk}))
 
 
 """ koniec testowych widoków """
