@@ -4,8 +4,10 @@ import datetime
 import requests
 # from django.core import serializers
 from django import forms
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 # from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 # from django.urls import reverse
 from django.contrib import messages
@@ -194,11 +196,42 @@ class ContactFormView(FormView):
 
 # poniższe trzy klasy odpowiadają za tworzenie, aktualizację i usuwanie autorów z bazy
 # dokładnie taki sam mechanizm można zastosować do książek
+# można też negocjować zawartość z JSONem
 
 
-class AuthorCreateView(CreateView):
+class JsonableResponseMixin:
+    """
+    Mixin do dodawania wsparcia JSON do formularza.
+    Musi być używane z FormView opartym na obiektach (object-based, np CreateView)
+    """
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.accepts('text/html'):
+            return response
+        else:
+            return JsonResponse(form.errors, status=400)
+
+    def form_valid(self, form):
+        # musimy mieć pewność, że wywołujemy metodę "rodzica" form_valid()
+        # ponieważ może ona zrobić część procesów (w przypadku CreateView,
+        # wywoła form.save())
+        response = super().form_valid(form)
+        if self.request.accepts('text/html'):
+            return response
+        else:
+            data = {'pk': self.object.pk, }
+            return JsonResponse(data)
+
+
+class AuthorCreateView(LoginRequiredMixin, CreateView):
+    # możemy też użyć tej klasy z odwołaniem do JSONa
+    # class AuthorCreateView(JsonableResponseMixin, CreateView):
     model = Author
     fields = ['name']
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
 
 
 class AuthorUpdateView(UpdateView):
