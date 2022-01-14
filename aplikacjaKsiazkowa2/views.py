@@ -126,6 +126,8 @@ class PublisherListView(generic.ListView):
 # https://docs.djangoproject.com/pl/4.0/ref/class-based-views/
 # https://docs.djangoproject.com/pl/4.0/topics/class-based-views/intro/
 # https://docs.djangoproject.com/pl/4.0/topics/db/queries/
+# do tego
+# https://docs.djangoproject.com/pl/3.2/topics/class-based-views/mixins/
 
 
 class PublisherDetailView(generic.DetailView):
