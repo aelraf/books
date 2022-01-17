@@ -226,6 +226,42 @@ class AuthorDetailView2(FormMixin, generic.DetailView):
         return super().form_valid(form)
 
 
+# trzecie podejście
+class AuthorDetailView3(generic.DetailView):
+    model = Author
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = AuthorInterestForm()
+        return context
+
+
+class AuthorInterestFormView(SingleObjectMixin, FormView):
+    template_name = 'books/author_detail.html'
+    form_class = AuthorInterestForm
+    model = Author
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('author-detail', kwargs={'pk': self.object.pk})
+
+
+class AuthorView(View):
+
+    def get(self, request, *args, **kwargs):
+        view = AuthorDetailView3.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = AuthorInterestFormView.as_view()
+        return view(request, *args, **kwargs)
+
+
 class ContactForm(forms.Form):
     name = forms.CharField()
     message = forms.CharField(widget=forms.Textarea)
@@ -314,7 +350,7 @@ class RecordInterestView(SingleObjectMixin, View):
 
 
 class EditView(generic.DetailView):
-    """ widok generyczny w zamian za widok edit(request, id) """
+    """ widok generyczny w zamian za widok edit(request, id), lepiej nazwać BookUpdateView """
     model = Book
     context_object_name = "books_data"
     template_name = 'aplikacjaKsiazkowa2/edit.html'
