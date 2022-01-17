@@ -18,6 +18,7 @@ from django.utils.dateparse import parse_date
 from django.views import generic, View
 from django.views.generic import FormView, CreateView, UpdateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import FormMixin
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -193,6 +194,36 @@ class AuthorDetailView(generic.DetailView):
         obj.last_accessed = timezone.now()
         obj.save()
         return obj
+
+
+# drugie podejście do powyższej klasy
+class AuthorInterestForm(forms.Form):
+    message = forms.CharField()
+
+
+class AuthorDetailView2(FormMixin, generic.DetailView):
+    model = Author
+    form_class = AuthorInterestForm
+
+    def get_success_url(self):
+        return reverse('author-detail', kwargs={'pk': self.object.pk})
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        """
+        tutaj możemy zapisywać zainteresowania użytkownika używając wiadomości
+        przekazywanych w form.cleaned_data['message']
+        """
+        return super().form_valid(form)
 
 
 class ContactForm(forms.Form):
