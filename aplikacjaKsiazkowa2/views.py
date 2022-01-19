@@ -127,9 +127,9 @@ class PublisherListView(generic.ListView):
 # https://docs.djangoproject.com/pl/4.0/ref/class-based-views/
 # https://docs.djangoproject.com/pl/4.0/topics/class-based-views/intro/
 # https://docs.djangoproject.com/pl/4.0/topics/db/queries/
-# do tego
 # https://docs.djangoproject.com/pl/3.2/topics/class-based-views/mixins/
-
+# do tego
+# https://docs.djangoproject.com/pl/3.2/topics/class-based-views/mixins/#more-than-just-html
 
 class PublisherDetailView(generic.DetailView):
     model = Publisher
@@ -344,6 +344,24 @@ class RecordInterestView(SingleObjectMixin, View):
         self.object = self.get_object()
         # zainteresowanie rejestrujemy tutaj, w linii powyżej
         return HttpResponseRedirect(reverse('author-detail', kwargs={'pk': self.object.pk}))
+
+
+class JSONResponseMixin:
+    """
+    Załóżmy, że piszemy API, w którym powinniśmy zwracać JSONa zamiast renderowania HTML.
+    Możemy stworzyć klasę mixin do używania we wszystkich widokach, np obsługującą konwersję do JSONa.
+    """
+    def render_to_json_response(self, context, **response_kwargs):
+        """
+        Zwraca odpowiedź JSONową, przekształcając "context" na zawartość.
+        """
+        return JsonResponse(self.get_data(context), **response_kwargs)
+
+    def get_data(self, context):
+        """
+        Zwraca obiekt serializowany jako JSON przez json.dumps()
+        """
+        return context
 
 
 """ koniec testowych widoków """
