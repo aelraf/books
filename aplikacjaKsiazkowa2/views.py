@@ -128,8 +128,10 @@ class PublisherListView(generic.ListView):
 # https://docs.djangoproject.com/pl/4.0/topics/class-based-views/intro/
 # https://docs.djangoproject.com/pl/4.0/topics/db/queries/
 # https://docs.djangoproject.com/pl/3.2/topics/class-based-views/mixins/
-# do tego
+# do tego (17 stycznia 2022)
 # https://docs.djangoproject.com/pl/3.2/topics/class-based-views/mixins/#more-than-just-html
+# do tego (19 stycznia 2022)
+# https://docs.djangoproject.com/pl/3.2/topics/migrations/
 
 class PublisherDetailView(generic.DetailView):
     model = Publisher
