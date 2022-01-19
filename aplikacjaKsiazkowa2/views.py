@@ -16,8 +16,8 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date
 # from django.utils.datetime_safe import date
 from django.views import generic, View
-from django.views.generic import FormView, CreateView, UpdateView, DeleteView
-from django.views.generic.detail import SingleObjectMixin
+from django.views.generic import FormView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic.detail import SingleObjectMixin, BaseDetailView, SingleObjectTemplateResponseMixin
 from django.views.generic.edit import FormMixin
 
 from rest_framework.decorators import api_view
@@ -362,6 +362,30 @@ class JSONResponseMixin:
         Zwraca obiekt serializowany jako JSON przez json.dumps()
         """
         return context
+
+
+class JSONView(JSONResponseMixin, TemplateView):
+    def render_to_response(self, context, **response_kwargs):
+        return self.render_to_json_response(context, **response_kwargs)
+
+
+class JSONDetailView(JSONResponseMixin, BaseDetailView):
+    """
+    Ten widok może być uzywany jak każdy inny widok szczegółowy, z zastrzeżeniem, że zwraca inny typ zawartości.
+    """
+    def render_to_response(self, context, **response_kwargs):
+        return self.render_to_json_response(context, **response_kwargs)
+
+
+class HybridDetailView(JSONResponseMixin, SingleObjectTemplateResponseMixin, BaseDetailView):
+    def render_to_response(self, context):
+        """
+        Sprawdzamy, czy argumentem GET jest "format=json"
+        """
+        if self.request.GET.get('format') == 'json':
+            self.render_to_json_response(context)
+        else:
+            return super().render_to_response(context)
 
 
 """ koniec testowych widoków """
