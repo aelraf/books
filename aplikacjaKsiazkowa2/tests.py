@@ -143,6 +143,7 @@ class BookViewTests(TestCase):
 
         self.assertIs(Book.objects.filter(title=book.title).exists(), True)
 
+    """
     def test_edit_book_get_good_id(self):
         book = create_brzechwa()
         url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
@@ -172,7 +173,7 @@ class BookViewTests(TestCase):
         wynik = Book.objects.filter(title="Brzechwa misiom i innym").exists()
         print("test_edit_book_post: {}".format(wynik))
         self.assertIs(wynik, True)
-
+    """
     def test_delete_book_get_good_id(self):
         book = create_brzechwa()
         url = reverse('aplikacjaKsiazkowa2:delete', kwargs={'id': 1})
