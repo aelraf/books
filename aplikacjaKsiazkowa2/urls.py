@@ -15,24 +15,22 @@
 from django.urls import path, include
 from . import views
 from rest_framework import routers
-# from .views import BookViewSet, PublisherListView
 
 # router = routers.DefaultRouter()
 # router.register(r'book', BookViewSet)
-from .views import BookUpdateView
+from .views import BookUpdateView, ListBookView
 
 app_name = 'aplikacjaKsiazkowa2'
 urlpatterns = [
     path('', views.index, name='index'),
     # path('edit/<int:id>', views.edit, name='edit'),
     path('edit/<int:id>', BookUpdateView.as_view(), name='edit'),
-    path('lista', views.lista, name='lista'),
+    # path('lista', views.lista, name='lista'),
+    path('lista', ListBookView.as_view(), name='lista'),
     path('add_book', views.add_book, name='add_book'),
     path('delete/<int:id>', views.delete, name='delete'),
     path('gugle', views.gugle, name='gugle'),
     path('my_api/', views.my_api, name='my_api'),
-
-    # path('publishers/', PublisherListView.as_view()),
 
     # path('api', include(router.urls)),
     # path('api-auth', include('rest_framework.urls', namespace='rest_framework'))
