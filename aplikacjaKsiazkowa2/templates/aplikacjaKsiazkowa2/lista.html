@@ -34,13 +34,13 @@
                     <th scope="row">{{ book.cover }}</th>
                     <th scope="row">{{ book.language }}</th>
                     <th scope="row">
-                        <form action="{% url 'aplikacjaKsiazkowa2:edit' id=book.id %}">
+                        <form action="{% url 'aplikacjaKsiazkowa2:edit_book' id=book.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-warning">Edytuj</button>
                         </form>
                     </th>
                     <th scope="row">
-                        <form action="{% url 'aplikacjaKsiazkowa2:delete' id=book.id %}">
+                        <form action="{% url 'aplikacjaKsiazkowa2:delete_book' id=book.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Usuń</button>
                         </form>
