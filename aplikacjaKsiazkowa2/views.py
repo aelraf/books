@@ -1,23 +1,15 @@
 # -*- coding: utf-8 -*-
-import datetime
 
-import requests
-# from django.core import serializers
 from django.core.exceptions import ValidationError
-# from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.contrib import messages
-from django.utils.dateparse import parse_date
-# from django.utils.datetime_safe import date
-from django.views import generic, View
-from django.views.generic import UpdateView
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import viewsets, status
+from django.views import generic
+from django.views.generic import UpdateView, CreateView, DeleteView
+
+from rest_framework import viewsets
 
 from aplikacjaKsiazkowa2.models import Book
-# from . import serializer
 from .serializer import BookSerializer
 
 
@@ -32,12 +24,25 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
 
 
+class BookCreateView(CreateView):
+    """ widok klasowy za metodę add_book"""
+    model = Book
+    fields = ['name']
+    template_name = 'aplikacjaKsiazkowa2/add_book.html'
+    context_object_name = 'books_data'
+
+
 class BookUpdateView(UpdateView):
     """ drugi widok klasowy w zamian za metodę edit() """
     model = Book
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/edit.html'
     context_object_name = 'books_data'
+    success_url = 'aplikacjaKsiazkowa2/lista.html'
+
+
+class BookDeleteView(DeleteView):
+    model = Book
     success_url = 'aplikacjaKsiazkowa2/lista.html'
 
 

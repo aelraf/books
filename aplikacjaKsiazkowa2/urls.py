@@ -15,12 +15,14 @@
 from django.urls import path
 from . import views
 
-from .views import BookUpdateView, ListBookView, IndexView
+from .views import BookUpdateView, ListBookView, IndexView, BookCreateView, BookDeleteView
 
 app_name = 'aplikacjaKsiazkowa2'
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
+    path('add_book', BookCreateView.as_view(), name='add_book'),
     path('edit/<int:id>', BookUpdateView.as_view(), name='edit'),
+    path('delete/<int:id>', BookDeleteView.delete, name='delete'),
     path('lista', ListBookView.as_view(), name='lista'),
     path('delete/<int:id>', views.delete, name='delete'),
 ]
