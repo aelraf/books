@@ -22,12 +22,12 @@ from .serializer import BookSerializer
 
 
 class IndexView(generic.ListView):
-    """ widok generyczny w zamian za widok index(request) """
+    """ widok ogólny w zamian za widok index(request) """
     template_name = 'aplikacjaKsiazkowa2/index.html'
 
 
 class BookViewSet(viewsets.ModelViewSet):
-    """ początek widoku generycznego REST API za widok my_api """
+    """ początek widoku ogólnego REST API za widok my_api """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
