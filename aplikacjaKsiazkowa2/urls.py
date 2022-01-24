@@ -19,12 +19,13 @@ from rest_framework import routers
 
 # router = routers.DefaultRouter()
 # router.register(r'book', BookViewSet)
-
+from .views import BookUpdateView
 
 app_name = 'aplikacjaKsiazkowa2'
 urlpatterns = [
     path('', views.index, name='index'),
-    path('edit/<int:id>', views.edit, name='edit'),
+    # path('edit/<int:id>', views.edit, name='edit'),
+    path('edit/<int:id>', BookUpdateView.as_view()),
     path('lista', views.lista, name='lista'),
     path('add_book', views.add_book, name='add_book'),
     path('delete/<int:id>', views.delete, name='delete'),

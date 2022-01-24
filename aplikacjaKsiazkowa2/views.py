@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.utils.dateparse import parse_date
 # from django.utils.datetime_safe import date
 from django.views import generic, View
-
+from django.views.generic import UpdateView
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -108,8 +108,9 @@ def my_api(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+"""
 class EditView(generic.DetailView):
-    """ widok generyczny w zamian za widok edit(request, id), lepiej nazwać BookUpdateView """
+    # widok generyczny w zamian za widok edit(request, id), lepiej nazwać BookUpdateView 
     model = Book
     context_object_name = "books_data"
     template_name = 'aplikacjaKsiazkowa2/edit.html'
@@ -125,8 +126,18 @@ class EditView(generic.DetailView):
 
     def post(self, request):
         pass
+"""
 
 
+class BookUpdateView(UpdateView):
+    """ drugi widok klasowy w zamian za metodę edit() """
+    model = Book
+    fields = ['id']
+    template_name = 'aplikacjaKsiazkowa2/edit.html'
+    context_object_name = 'books_data'
+
+
+"""
 def edit(request, id):
     edytowana = get_object_or_404(Book, id=id)
     if request.method == 'POST':
@@ -173,6 +184,7 @@ def edit(request, id):
 
     context = {'book': edytowana}
     return render(request, 'aplikacjaKsiazkowa2/edit.html', context)
+"""
 
 
 def add_book(request):

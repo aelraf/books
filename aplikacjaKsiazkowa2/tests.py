@@ -318,3 +318,22 @@ class GugleApiTests(TestCase):
         self.assertEqual(code, 200)
 
 
+class BookUpdateViewTest(TestCase):
+    def test_update_book(self):
+        book = create_brzechwa()
+
+        url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
+        response = self.client.post(url, {
+            'title': "Brzechwa misiom i innym",
+            'author': book.author,
+            'pub_date': book.pub_date,
+            'isbn': book.isbn,
+            'pages': book.pages,
+            'cover': book.cover,
+            'language': book.language
+        })
+        self.assertEqual(response.status_code, 200)
+        # wynik = Book.objects.filter(title="Brzechwa misiom i innym").exists()
+        # print("test_edit_book_post: {}".format(wynik))
+        # self.assertIs(wynik, True)
+
