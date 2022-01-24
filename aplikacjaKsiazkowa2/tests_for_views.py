@@ -18,7 +18,7 @@ def create_brzechwa():
     )
 
 
-class BookUpdateViewTest(TestCase):
+class BookUpdateViewTests(TestCase):
     def test_update_book(self):
         book = create_brzechwa()
 

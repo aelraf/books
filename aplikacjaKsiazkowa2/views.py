@@ -108,83 +108,13 @@ def my_api(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-"""
-class EditView(generic.DetailView):
-    # widok generyczny w zamian za widok edit(request, id), lepiej nazwać BookUpdateView 
-    model = Book
-    context_object_name = "books_data"
-    template_name = 'aplikacjaKsiazkowa2/edit.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['book_data'] = Book.objects.filter(id=id)
-
-        return context
-
-    def get_queryset(self):
-        return Book.objects.filter(id=self.id)
-
-    def post(self, request):
-        pass
-"""
-
-
 class BookUpdateView(UpdateView):
     """ drugi widok klasowy w zamian za metodę edit() """
     model = Book
-    fields = ['id']
+    fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/edit.html'
     context_object_name = 'books_data'
-
-
-"""
-def edit(request, id):
-    edytowana = get_object_or_404(Book, id=id)
-    if request.method == 'POST':
-        # messages.success(request, "POST - Edytujesz książkę o id: {}".format(id))
-        title = request.POST.get('title')
-        author = request.POST.get('author')
-        data = request.POST.get('pub_date')
-        isbn = request.POST.get('isbn')
-        pages = request.POST.get('pages')
-        cover = request.POST.get('cover')
-        language = request.POST.get('language')
-
-        if edytowana.title != title:
-            edytowana.title = title
-        if edytowana.author != author:
-            edytowana.author = author
-        try:
-            if edytowana.pub_date != data:
-                edytowana.pub_date = data
-        except ValidationError:
-            messages.error(request, "Podano zły format daty!")
-            print("edit - data: {}".format(edytowana.pub_date))
-        if edytowana.isbn != isbn:
-            edytowana.isbn = isbn
-        try:
-            if edytowana.pages != pages:
-                edytowana.pages = pages
-        except ValidationError:
-            messages.error(request, "Podano zły format ilości stron!")
-            print("edit - strony: {}".format(edytowana.pages))
-
-        if edytowana.cover != cover:
-            edytowana.cover = cover
-        if edytowana.language != language:
-            edytowana.language = language
-        try:
-            edytowana.save()
-        except ValidationError:
-            messages.error(request, "Podano zły format danych!")
-
-        data = Book.objects.order_by('id')
-        context = {"books_data": data}
-        return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
-
-    context = {'book': edytowana}
-    return render(request, 'aplikacjaKsiazkowa2/edit.html', context)
-"""
+    success_url = 'aplikacjaKsiazkowa2/lista.html'
 
 
 def add_book(request):
