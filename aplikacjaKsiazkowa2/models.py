@@ -27,7 +27,7 @@ class Book(models.Model):
     class Meta:
         ordering = ['id']
 
-
+"""
 class Publisher(models.Model):
     name = models.CharField(max_length=30)
     address = models.CharField(max_length=50)
@@ -51,8 +51,12 @@ class Author(models.Model):
     last_accessed = models.DateTimeField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['-name']
+
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('author-detail', kwargs={'pk': self.pk})
+"""

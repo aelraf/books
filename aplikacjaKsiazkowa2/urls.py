@@ -15,7 +15,7 @@
 from django.urls import path, include
 from . import views
 from rest_framework import routers
-from .views import BookViewSet, PublisherListView
+# from .views import BookViewSet, PublisherListView
 
 # router = routers.DefaultRouter()
 # router.register(r'book', BookViewSet)
@@ -31,7 +31,7 @@ urlpatterns = [
     path('gugle', views.gugle, name='gugle'),
     path('my_api/', views.my_api, name='my_api'),
 
-    path('publishers/', PublisherListView.as_view()),
+    # path('publishers/', PublisherListView.as_view()),
 
     # path('api', include(router.urls)),
     # path('api-auth', include('rest_framework.urls', namespace='rest_framework'))
