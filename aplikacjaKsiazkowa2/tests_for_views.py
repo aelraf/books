@@ -19,10 +19,16 @@ def create_brzechwa():
 
 
 class BookUpdateViewTests(TestCase):
-    def test_update_book(self):
+    def test_update_book_get(self):
         book = create_brzechwa()
 
-        url = reverse('aplikacjaKsiazkowa2:edit', kwargs={'id': 1})
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'id': 1}))
+        self.assertEqual(response.status_code, 200)
+"""
+    def test_update_book_post(self):
+        book = create_brzechwa()
+
+        url = reverse('aplikacjaKsiazkowa2:edit_book',  kwargs={'id': 1})
         response = self.client.post(url, {
             'title': "Brzechwa misiom i innym",
             'author': book.author,
@@ -32,7 +38,17 @@ class BookUpdateViewTests(TestCase):
             'cover': book.cover,
             'language': book.language
         })
+        self.assertEqual(response.status_code, 200)"""
+
+
+class IndexViewTests(TestCase):
+    def test_index_response(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:index'))
         self.assertEqual(response.status_code, 200)
-        # wynik = Book.objects.filter(title="Brzechwa misiom i innym").exists()
-        # print("test_edit_book_post: {}".format(wynik))
-        # self.assertIs(wynik, True)
+
+
+class BookCreateViewTests(TestCase):
+    def test_response(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:add_book'))
+        self.assertEqual(response.status_code, 200)
+

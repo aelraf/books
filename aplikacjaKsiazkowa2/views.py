@@ -16,6 +16,8 @@ from .serializer import BookSerializer
 class IndexView(generic.ListView):
     """ widok ogólny w zamian za widok index(request) """
     template_name = 'aplikacjaKsiazkowa2/index.html'
+    queryset = Book.objects.all()
+    context_object_name = 'books_data'
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -27,7 +29,7 @@ class BookViewSet(viewsets.ModelViewSet):
 class BookCreateView(CreateView):
     """ widok klasowy za metodę add_book"""
     model = Book
-    fields = ['name']
+    fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/add_book.html'
     context_object_name = 'books_data'
 
