@@ -34,7 +34,7 @@
                     <th scope="row">{{ book.cover }}</th>
                     <th scope="row">{{ book.language }}</th>
                     <th scope="row">
-                        <form action="{% url 'aplikacjaKsiazkowa2:edit_book' id=book.id %}">
+                        <form action="{% url 'aplikacjaKsiazkowa2:edit_book' book.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-warning">Edytuj</button>
                         </form>

@@ -52,12 +52,13 @@ class ListBookView(generic.ListView):
     template_name = 'aplikacjaKsiazkowa2/lista.html'
     context_object_name = 'books_data'
 
-    def get_queryset(self):
-        data = Book.objects.order_by('id')
+    def get(self, request, *args, **kwargs):
+        id = kwargs.get('id')
+        data = Book.objects.all()
         context = {"books_data": data}
         return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
-    def post(self):
+    def post(self, request, *args, **kwargs):
         if self.request.method == "POST":
             data = Book.objects.order_by('id')
 

@@ -21,7 +21,7 @@ app_name = 'aplikacjaKsiazkowa2'
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('add_book', BookCreateView.as_view(), name='add_book'),
-    path('edit/<int:id>/', views.BookUpdateView.as_view(), name='edit_book'),
-    path('delete/<int:id>/', BookDeleteView.delete, name='delete_book'),
+    path('edit_book/<str:pk>', views.BookUpdateView.as_view(), name='edit_book'),
+    path('delete/<int:id>', BookDeleteView.delete, name='delete_book'),
     path('lista', ListBookView.as_view(), name='lista'),
 ]
