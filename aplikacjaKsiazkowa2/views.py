@@ -40,23 +40,23 @@ class BookUpdateView(UpdateView):
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/edit.html'
     context_object_name = 'books_data'
-    success_url = 'aplikacjaKsiazkowa2/lista_old.html'
+    success_url = 'aplikacjaKsiazkowa2/lista.html'
 
 
 class BookDeleteView(DeleteView):
     model = Book
-    success_url = 'aplikacjaKsiazkowa2/lista_old.html'
+    success_url = 'aplikacjaKsiazkowa2/lista.html'
 """
 
 
 class ListBookView(generic.ListView):
-    template_name = 'aplikacjaKsiazkowa2/lista_old.html'
+    template_name = 'aplikacjaKsiazkowa2/lista.html'
     context_object_name = 'books_data'
 
     def get_queryset(self):
         books_data = Book.objects.all()
         context = {'books_data': books_data}
-        return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
+        return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
     def post(self, request, *args, **kwargs):
         data = Book.objects.order_by('id')
@@ -65,7 +65,7 @@ class ListBookView(generic.ListView):
 
         context = {'books_data': data}
         print('\n lista - POST - koniec \n')
-        return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
+        return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
 
 
