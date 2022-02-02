@@ -15,13 +15,13 @@
 from django.urls import path
 from . import views
 
-from .views import BookUpdateView, ListBookView, IndexView, BookCreateView, BookDeleteView
+from .views import ListBookView, IndexView #, BookCreateView, BookDeleteView
 
 app_name = 'aplikacjaKsiazkowa2'
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
-    path('add_book', BookCreateView.as_view(), name='add_book'),
-    path('edit_book/<str:pk>', views.BookUpdateView.as_view(), name='edit_book'),
-    path('delete/<int:id>', BookDeleteView.delete, name='delete_book'),
+    # path('add_book', BookCreateView.as_view(), name='add_book'),
+    # path('edit_book/<str:pk>', views.BookUpdateView.as_view(), name='edit_book'),
+    # path('delete/<str:id>', BookDeleteView.as_view(), name='delete_book'),
     path('lista', ListBookView.as_view(), name='lista'),
 ]

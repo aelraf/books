@@ -17,14 +17,14 @@ def create_brzechwa():
         language="PL"
     )
 
-
+"""
 class BookUpdateViewTests(TestCase):
     def test_update_book_get(self):
         book = create_brzechwa()
 
         response = self.client.get(reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'id': 1}))
         self.assertEqual(response.status_code, 200)
-"""
+
     def test_update_book_post(self):
         book = create_brzechwa()
 

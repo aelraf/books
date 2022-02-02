@@ -19,15 +19,15 @@ class IndexView(generic.ListView):
     queryset = Book.objects.all()
     context_object_name = 'books_data'
 
-
+"""
 class BookViewSet(viewsets.ModelViewSet):
-    """ początek widoku ogólnego REST API za widok my_api """
+    # początek widoku ogólnego REST API za widok my_api 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
 
 class BookCreateView(CreateView):
-    """ widok klasowy za metodę add_book"""
+    # widok klasowy za metodę add_book
     model = Book
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/add_book.html'
@@ -35,22 +35,28 @@ class BookCreateView(CreateView):
 
 
 class BookUpdateView(UpdateView):
-    """ drugi widok klasowy w zamian za metodę edit() """
+    # drugi widok klasowy w zamian za metodę edit() 
     model = Book
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/edit.html'
     context_object_name = 'books_data'
-    success_url = 'aplikacjaKsiazkowa2/lista.html'
+    success_url = 'aplikacjaKsiazkowa2/lista_old.html'
 
 
 class BookDeleteView(DeleteView):
     model = Book
-    success_url = 'aplikacjaKsiazkowa2/lista.html'
+    success_url = 'aplikacjaKsiazkowa2/lista_old.html'
+"""
 
 
 class ListBookView(generic.ListView):
-    template_name = 'aplikacjaKsiazkowa2/lista.html'
+    template_name = 'aplikacjaKsiazkowa2/lista_old.html'
     context_object_name = 'books_data'
+
+    def get_queryset(self):
+        books_data = Book.objects.all()
+        context = {'books_data': books_data}
+        return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
     def post(self, request, *args, **kwargs):
         data = Book.objects.order_by('id')
@@ -59,7 +65,7 @@ class ListBookView(generic.ListView):
 
         context = {'books_data': data}
         print('\n lista - POST - koniec \n')
-        return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+        return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
 
 

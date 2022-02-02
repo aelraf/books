@@ -114,7 +114,7 @@ class BookUpdateView(UpdateView):
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/edit.html'
     context_object_name = 'books_data'
-    success_url = 'aplikacjaKsiazkowa2/lista.html'
+    success_url = 'aplikacjaKsiazkowa2/lista_old.html'
 
 
 def add_book(request):
@@ -158,13 +158,13 @@ def add_book(request):
 
 
 class ListBookView(generic.ListView):
-    template_name = 'aplikacjaKsiazkowa2/lista.html'
+    template_name = 'aplikacjaKsiazkowa2/lista_old.html'
     context_object_name = 'books_data'
 
     def get_queryset(self):
         data = Book.objects.order_by('id')
         context = {"books_data": data}
-        return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+        return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
     def post(self):
         if self.request.method == "POST":
@@ -183,7 +183,7 @@ class ListBookView(generic.ListView):
                     if not data.exists():
                         messages.warning(self.request, "Pusty zakres przeszukiwania dat!")
                     context = {'books_data': data}
-                    return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+                    return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
             if 'language' in self.request.POST:
                 jezyk = self.request.POST.get('language')
@@ -196,7 +196,7 @@ class ListBookView(generic.ListView):
                     if not data.exists():
                         messages.warning(self.request, "Brak książek tego języka")
                     context = {'books_data': data}
-                    return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+                    return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
             if 'title' in self.request.POST:
                 tytul = self.request.POST.get('title')
@@ -209,7 +209,7 @@ class ListBookView(generic.ListView):
                     if not data.exists():
                         messages.warning(self.request, "Brak książek o tym tytule")
                     context = {'books_data': data}
-                    return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+                    return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
             if 'author' in self.request.POST:
                 autor = self.request.POST.get('author')
@@ -222,11 +222,11 @@ class ListBookView(generic.ListView):
                     if not data.exists():
                         messages.warning(self.request, "Brak książek tego autora")
                     context = {'books_data': data}
-                    return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+                    return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
             context = {'books_data': data}
             print('\n lista - POST - koniec \n')
-            return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+            return render(self.request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
 
 def lista(request):
@@ -246,7 +246,7 @@ def lista(request):
                 if not data.exists():
                     messages.warning(request, "Pusty zakres przeszukiwania dat!")
                 context = {'books_data': data}
-                return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+                return render(request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
         if 'language' in request.POST:
             jezyk = request.POST.get('language')
@@ -259,7 +259,7 @@ def lista(request):
                 if not data.exists():
                     messages.warning(request, "Brak książek tego języka")
                 context = {'books_data': data}
-                return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+                return render(request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
         if 'title' in request.POST:
             tytul = request.POST.get('title')
@@ -272,7 +272,7 @@ def lista(request):
                 if not data.exists():
                     messages.warning(request, "Brak książek o tym tytule")
                 context = {'books_data': data}
-                return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+                return render(request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
         if 'author' in request.POST:
             autor = request.POST.get('author')
@@ -285,15 +285,15 @@ def lista(request):
                 if not data.exists():
                     messages.warning(request, "Brak książek tego autora")
                 context = {'books_data': data}
-                return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+                return render(request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
         context = {'books_data': data}
         print('\n lista - POST - koniec \n')
-        return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+        return render(request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
     data = Book.objects.order_by('id')
     context = {"books_data": data}
-    return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+    return render(request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
 
 def delete(request, id):
@@ -313,7 +313,7 @@ def delete(request, id):
     messages.warning(request, "Usuwasz książkę o id={}".format(id))
     data = Book.objects.order_by('id')
     context = {"books_data": data}
-    return render(request, 'aplikacjaKsiazkowa2/lista.html', context)
+    return render(request, 'aplikacjaKsiazkowa2/lista_old.html', context)
 
 
 def gugle(request):
