@@ -52,6 +52,9 @@ class BookDeleteView(DeleteView):
 class ListBookView(generic.ListView):
     template_name = 'aplikacjaKsiazkowa2/lista.html'
     context_object_name = 'books_data'
+    # queryset = Book.objects.all()
+    # https://getbootstrap.com/docs/5.1/content/tables/
+    # https://www.dennisivy.com/post/django-class-based-views/
 
     def get_queryset(self):
         books_data = Book.objects.all()
