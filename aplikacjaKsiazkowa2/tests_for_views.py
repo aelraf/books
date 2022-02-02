@@ -47,8 +47,23 @@ class IndexViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class ListViewTests(TestCase):
+    def test_list_response(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context['books_data'], [])
+
+    def test_list_with_one_book(self):
+        create_brzechwa()
+        books = Book.objects.all()
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
+
+        self.assertQuerysetEqual(response.context['books_data'], books)
+
+
+"""
 class BookCreateViewTests(TestCase):
     def test_response(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:add_book'))
         self.assertEqual(response.status_code, 200)
-
+"""

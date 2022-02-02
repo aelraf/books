@@ -25,7 +25,7 @@
     {% endif %}
 	
 	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <a class="navbar-brand" href="#">Opcje</a>
+        <a class="navbar-brand" href="{% url 'aplikacjaKsiazkowa2:index' %}">Główna</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -40,9 +40,6 @@
                 <!--li>
                     <a class="nav-link" href="gugle">Google API</a>
                 </li-->
-                <li>
-                    <a href="{% url 'aplikacjaKsiazkowa2:index' %}" class="nav-link" >Strona główna</a>
-                </li>
             </ul>
         </div>
     </nav>
