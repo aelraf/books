@@ -20,19 +20,22 @@ class IndexView(generic.ListView):
     context_object_name = 'books_data'
 
 
-"""
-class BookViewSet(viewsets.ModelViewSet):
-    # początek widoku ogólnego REST API za widok my_api 
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-
-
 class BookCreateView(CreateView):
     # widok klasowy za metodę add_book
     model = Book
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/add_book.html'
     context_object_name = 'books_data'
+
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+"""
+class BookViewSet(viewsets.ModelViewSet):
+    # początek widoku ogólnego REST API za widok my_api 
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
 
 class BookUpdateView(UpdateView):

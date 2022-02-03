@@ -35,12 +35,9 @@ opcji.
 Część 5:
 1. Napisz testy jednostkowe oraz sprawdź kod pod względem standardów PEP8 .
 
-Kod musi być napisany zgodnie ze standardami PEP8 oraz posiadać testy jednostkowe. Przy
-odsyłaniu zadania, prosimy o udostępnienie adresu www, na którym jest dostępna aplikacja
-oraz o adres do publicznego repozytorium, tak aby nasi rekruterzy techniczni byli w stanie
-zajrzeć w kod.
-Powodzenia!
+Kod musi być napisany zgodnie ze standardami PEP8 oraz posiadać testy jednostkowe. Ponadto udostępnimy adres www,
+na którym jest dostępna aplikacja: https://demo-books20211013.herokuapp.com/
 
+Aplikację wykonaliśmy za pomocą frameworku Django, najpierw przy użyciu widoków funkcyjnych, a następnie Class-Based Views.
 
-W drugim podejściu zrobimy aplikację za pomocą frameworku Django, który znacząco ułatwia całość.
 

@@ -122,9 +122,9 @@ class ListViewTests(TestCase):
     def test_list_choose_date(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
 
-"""
+
 class BookCreateViewTests(TestCase):
     def test_response(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:add_book'))
         self.assertEqual(response.status_code, 200)
-"""
+
