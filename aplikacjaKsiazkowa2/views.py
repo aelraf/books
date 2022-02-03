@@ -45,7 +45,13 @@ class BookCreateView(CreateView):
         print("BookCreateView: post: new_book: {}, created: {} ".format(new_book, created))
 
         # return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-        return redirect('aplikacjaKsiazkowa2:index')
+        return redirect('aplikacjaKsiazkowa2:lista')
+
+
+class BookDeleteView(DeleteView):
+    model = Book
+    template_name = 'aplikacjaKsiazkowa2/delete.html'
+    success_url = 'aplikacjaKsiazkowa2/lista.html'
 
 
 """
@@ -63,10 +69,6 @@ class BookUpdateView(UpdateView):
     context_object_name = 'books_data'
     success_url = 'aplikacjaKsiazkowa2/lista.html'
 
-
-class BookDeleteView(DeleteView):
-    model = Book
-    success_url = 'aplikacjaKsiazkowa2/lista.html'
 """
 
 
