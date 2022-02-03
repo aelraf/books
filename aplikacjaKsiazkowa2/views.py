@@ -19,6 +19,7 @@ class IndexView(generic.ListView):
     queryset = Book.objects.all()
     context_object_name = 'books_data'
 
+
 """
 class BookViewSet(viewsets.ModelViewSet):
     # początek widoku ogólnego REST API za widok my_api 
@@ -51,8 +52,8 @@ class BookDeleteView(DeleteView):
 
 class ListBookView(generic.ListView):
     model = Book
-    template_name = 'aplikacjaKsiazkowa2/lista.html'
     context_object_name = 'books_data'
+    template_name = 'aplikacjaKsiazkowa2/lista.html'
     queryset = Book.objects.all()
     # https://getbootstrap.com/docs/5.1/content/tables/
     # https://www.dennisivy.com/post/django-class-based-views/
@@ -71,7 +72,7 @@ class ListBookView(generic.ListView):
 
         q = request.POST.get('q') if request.POST.get('q') is not None else ''
 
-        context = {'books_data': data}
+        context = {'books_data': data }
         print('\n lista - POST - koniec \n')
         return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 

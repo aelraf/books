@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-
+# mockowanie: https://www.20tab.com/en/blog/test-python-mocking/
+# i to: https://medium.com/kami-people/mocking-for-good-mocking-with-python-and-django-4d05cfda4fa3
+# i https://yeraydiazdiaz.medium.com/what-the-mock-cheatsheet-mocking-in-python-6a71db997832
+from django.db.models import QuerySet
 from django.test import TestCase
 from django.urls import reverse
 
@@ -72,22 +75,52 @@ class IndexViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class ListViewTests(TestCase):
+class EmptyListViewTests(TestCase):
     def test_list_response(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['books_data'], [])
 
+
+class ListViewTests(TestCase):
     def setUp(self) -> None:
         create_brzechwa()
         create_tolkien()
+        create_przechrzta()
 
-    def test_list_with_one_book(self):
+    def test_list_with_three_books(self):
         books = Book.objects.all()
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
 
-        self.assertQuerysetEqual(response.context['books_data'], books)
+        books_count = books.count()
+        response_count = response.context['books_data'].count()
 
+        self.assertIsInstance(books, QuerySet)
+        self.assertQuerysetEqual(response.context['books_data'], books)
+        self.assertEqual(response_count, books_count)
+
+    def test_list_if_the_book_in_response(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
+
+        hobbit = Book.objects.get(id='2')
+        self.assertEqual(response.context['books_data'][1], hobbit)
+
+    def test_list_without_the_book(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
+
+        new_book = Book.objects.create(
+            title="Wilczy pagon",
+            author="Admin Przuchta",
+            pub_date="2019-11-19",
+            isbn="978837234575",
+            pages=641,
+            cover="https://s.lubimyczytac.pl/upload/books/47000/47695/352x500.jpg",
+            language="PL"
+        )
+        self.assertNotIn(new_book, response.context['books_data'])
+
+    def test_list_choose_date(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
 
 """
 class BookCreateViewTests(TestCase):

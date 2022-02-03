@@ -75,6 +75,9 @@
             {% for book in books_data %}
                 {{ book.id }} {{ book.title }} {{ book.author }}
             {% endfor %}
+            {% for book in form %}
+                {{ book.id }} {{ book.title }} {{ book.author }}
+            {% endfor %}
         </div>
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
