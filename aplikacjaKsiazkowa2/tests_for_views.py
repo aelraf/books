@@ -124,7 +124,20 @@ class ListViewTests(TestCase):
 
 
 class BookCreateViewTests(TestCase):
-    def test_response(self):
+    def test_add_book_response(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:add_book'))
         self.assertEqual(response.status_code, 200)
+
+    def test_add_book_post_with_data(self):
+        book = {
+            'title': 'Siedem lat chudych',
+            'author': "Marian Hemar",
+            'pub_date': '2015-01-01',
+            'isbn': '9788375654332',
+            'pages': 424,
+            'cover': 'https://s.lubimyczytac.pl/upload/books/276000/276483/449275-352x500.jpg',
+            'language': 'pl'
+        }
+        response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
+
 
