@@ -17,6 +17,31 @@ def create_brzechwa():
         language="PL"
     )
 
+
+def create_tolkien():
+    return Book.objects.create(
+        title="Hobbit, czyli tam i z powrotem",
+        author="John Tolkien",
+        pub_date="2002-02-19",
+        isbn="8320716810",
+        pages=314,
+        cover="https://s.lubimyczytac.pl/upload/books/4000/4966/352x500.jpg",
+        language="PL"
+    )
+
+
+def create_przechrzta():
+    return Book.objects.create(
+        title="Wilczy legion",
+        author="Adam Przechrzta",
+        pub_date="2009-10-09",
+        isbn="9788375741575",
+        pages=416,
+        cover="https://s.lubimyczytac.pl/upload/books/47000/47695/352x500.jpg",
+        language="PL"
+    )
+
+
 """
 class BookUpdateViewTests(TestCase):
     def test_update_book_get(self):
@@ -53,8 +78,11 @@ class ListViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['books_data'], [])
 
-    def test_list_with_one_book(self):
+    def setUp(self) -> None:
         create_brzechwa()
+        create_tolkien()
+
+    def test_list_with_one_book(self):
         books = Book.objects.all()
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
 
