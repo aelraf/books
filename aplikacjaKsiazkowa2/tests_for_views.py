@@ -140,11 +140,22 @@ class BookCreateViewTests(TestCase):
         }
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         self.assertIs(Book.objects.filter(title=book['title']).exists(), True)
 
-        # books = Book.objects.all()
-        # books_count = books.count()
-        # response_count = response.context['books_data'].count()
-        #
-        # self.assertEqual(response_count, books_count)
+    def test_add_book_with_count_response(self):
+        book = {
+            'title': 'Siedem lat chudych',
+            'author': "Marian Hemar",
+            'pub_date': '2015-01-01',
+            'isbn': '9788375654332',
+            'pages': 424,
+            'cover': 'https://s.lubimyczytac.pl/upload/books/276000/276483/449275-352x500.jpg',
+            'language': 'pl'
+        }
+        response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
+
+        books = Book.objects.all()
+        books_count = books.count()
+
+        self.assertEqual(1, books_count)

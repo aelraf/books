@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.core.exceptions import ValidationError
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from django.views import generic
@@ -28,21 +28,8 @@ class BookCreateView(CreateView):
     context_object_name = 'books_data'
 
     def post(self, request, *args, **kwargs):
-        nowa = Book(
-            title=request.POST.get('title'),
-            author=request.POST.get('author'),
-            pub_date=request.POST.get('pub_date'),
-            isbn=request.POST.get('isbn'),
-            pages=request.POST.get('pages'),
-            cover=request.POST.get('cover'),
-            language=request.POST.get('language')
-        )
         title = request.POST.get('title')
-        new_book, created = Book.objects.get_or_create(title=title)
-
-        print("BookCreateView: post: new_book: {}, created: {} ".format(new_book, created))
-
-        Book.objects.create(
+        new_book, created = Book.objects.get_or_create(
             title=title,
             author=request.POST.get('author'),
             pub_date=request.POST.get('pub_date'),
@@ -51,8 +38,14 @@ class BookCreateView(CreateView):
             cover=request.POST.get('cover'),
             language=request.POST.get('language')
         )
+        if created is False:
+            messages.error("Błąd dodawania książki")
+            return render(request, 'aplikacjaKsiazkowa2/add_book.html')
 
-        return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+        print("BookCreateView: post: new_book: {}, created: {} ".format(new_book, created))
+
+        # return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+        return redirect('aplikacjaKsiazkowa2:index')
 
 
 """
