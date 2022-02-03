@@ -159,3 +159,15 @@ class BookCreateViewTests(TestCase):
         books_count = books.count()
 
         self.assertEqual(1, books_count)
+
+
+class BookDeleteViewTest(TestCase):
+    def setUp(self) -> None:
+        create_brzechwa()
+        create_tolkien()
+        create_przechrzta()
+
+    def test_delete_book_response(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:delete_book', kwargs={'pk': 1}))
+        self.assertEqual(response.status_code, 200)
+
