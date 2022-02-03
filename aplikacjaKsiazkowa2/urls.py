@@ -12,26 +12,16 @@
 #    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 
 
-from django.urls import path, include
+from django.urls import path
 from . import views
-from rest_framework import routers
 
-# router = routers.DefaultRouter()
-# router.register(r'book', BookViewSet)
-from .views import BookUpdateView, ListBookView
+from .views import ListBookView, IndexView #, BookCreateView, BookDeleteView
 
 app_name = 'aplikacjaKsiazkowa2'
 urlpatterns = [
-    path('', views.index, name='index'),
-    # path('edit/<int:id>', views.edit, name='edit'),
-    path('edit/<int:id>', BookUpdateView.as_view(), name='edit'),
-    # path('lista', views.lista, name='lista'),
+    path('', IndexView.as_view(), name='index'),
+    # path('add_book', BookCreateView.as_view(), name='add_book'),
+    # path('edit_book/<str:pk>', views.BookUpdateView.as_view(), name='edit_book'),
+    # path('delete/<str:id>', BookDeleteView.as_view(), name='delete_book'),
     path('lista', ListBookView.as_view(), name='lista'),
-    path('add_book', views.add_book, name='add_book'),
-    path('delete/<int:id>', views.delete, name='delete'),
-    path('gugle', views.gugle, name='gugle'),
-    path('my_api/', views.my_api, name='my_api'),
-
-    # path('api', include(router.urls)),
-    # path('api-auth', include('rest_framework.urls', namespace='rest_framework'))
 ]
