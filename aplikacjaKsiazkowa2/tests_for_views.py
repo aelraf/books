@@ -119,8 +119,8 @@ class ListViewTests(TestCase):
         )
         self.assertNotIn(new_book, response.context['books_data'])
 
-    def test_list_choose_date(self):
-        response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
+    # def test_list_choose_date(self):
+    #     response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
 
 
 class BookCreateViewTests(TestCase):
@@ -140,4 +140,11 @@ class BookCreateViewTests(TestCase):
         }
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
 
+        self.assertEqual(response.status_code, 200)
+        self.assertIs(Book.objects.filter(title=book['title']).exists(), True)
 
+        # books = Book.objects.all()
+        # books_count = books.count()
+        # response_count = response.context['books_data'].count()
+        #
+        # self.assertEqual(response_count, books_count)

@@ -28,7 +28,31 @@ class BookCreateView(CreateView):
     context_object_name = 'books_data'
 
     def post(self, request, *args, **kwargs):
-        pass
+        nowa = Book(
+            title=request.POST.get('title'),
+            author=request.POST.get('author'),
+            pub_date=request.POST.get('pub_date'),
+            isbn=request.POST.get('isbn'),
+            pages=request.POST.get('pages'),
+            cover=request.POST.get('cover'),
+            language=request.POST.get('language')
+        )
+        title = request.POST.get('title')
+        new_book, created = Book.objects.get_or_create(title=title)
+
+        print("BookCreateView: post: new_book: {}, created: {} ".format(new_book, created))
+
+        Book.objects.create(
+            title=title,
+            author=request.POST.get('author'),
+            pub_date=request.POST.get('pub_date'),
+            isbn=request.POST.get('isbn'),
+            pages=request.POST.get('pages'),
+            cover=request.POST.get('cover'),
+            language=request.POST.get('language')
+        )
+
+        return render(request, 'aplikacjaKsiazkowa2/add_book.html')
 
 
 """
