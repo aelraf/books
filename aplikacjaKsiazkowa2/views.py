@@ -45,7 +45,7 @@ class BookCreateView(CreateView):
                 messages.error(request, "Błąd dodawania książki")
                 return render(request, 'aplikacjaKsiazkowa2/add_book.html')
         except ValidationError:
-            messages.error(request, "Błąd dodawania książki")
+            messages.error(request, "Błąd dodawania książki: {}".format(ValidationError))
             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
         else:
             return redirect('aplikacjaKsiazkowa2:lista')
@@ -106,7 +106,7 @@ class BookUpdateView(UpdateView):
             if 'language' in request.POST:
                 book.language = request.POST.get('language')
         except ValidationError:
-            messages.error(request, "Błąd aktualizacji ksiażki - podaj poprawne dane!")
+            messages.error(request, "Błąd aktualizacji ksiażki - podaj poprawne dane! {}".format(ValidationError))
             return redirect('aplikacjaKsiazkowa2:edit_book')
         else:
             try:
@@ -144,47 +144,79 @@ class GugleApiView(generic.View):
     context_object_name = 'books_data'
     template_name = 'aplikacjaKsiazkowa2/gugleApi.html'
 
+    def get_value_from_gugle_response(self, tab, string: str):
+        value = None
+        if tab.get(string) is not None:
+            if string == 'imageLinks':
+                value = tab[string]['thumbnail']
+            else:
+                value = tab[string]
+        return value
+
     def get(self, request):
         return render(request, 'aplikacjaKsiazkowa2/gugleApi.html')
 
     def post(self, request):
-        print('GugleApiView - post: 1')
-        lista = {'title', 'author', 'pub_date', 'isbn', 'pages', 'cover', 'language'}
         if 'book_from_api' in request.POST:
-            print('GugleApiView - post: 2')
-
             book_from_gugle = request.POST.get('book_from_api')
             url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + book_from_gugle
 
             try:
-                print('GugleApiView - post: 3')
                 response = requests.get(url_looking)
                 if response.status_code == 200:
-                    print('GugleApiView - post: 4')
                     books_data = response.json()
                     for book in books_data['items']:
                         volume = book['volumeInfo']
-                        for l in lista:
-                            if l in volume:
-                                print("lista: {} - {}".format(l, volume.get(l)))
+                        title = volume['title']
 
                         if volume.get('authors') is not None:
                             author = volume['authors'][0]
                         else:
                             author = "Autorzy nieznani"
 
+                        if volume.get('publishedDate') is not None:
+                            pub_date = volume['publishedDate']
+                            if 4 <= len(pub_date) < 6:
+                                pub_date += "-01-01"
+                            elif 6 <= len(pub_date) < 8:
+                                pub_date += "-01"
+                        else:
+                            pub_date = None
+
+                        isbn = None
+                        if volume.get('industryIdentifiers') is not None:
+                            helper = volume['industryIdentifiers']
+                            for i in range(len(helper)):
+                                if helper[i]['type'] == 'ISBN_13':
+                                    isbn = helper[i]['identifier']
+                                    break
+
+                        pages = self.get_value_from_gugle_response(volume, 'pageCount')
+                        language = self.get_value_from_gugle_response(volume, 'language')
+                        cover = self.get_value_from_gugle_response(volume, 'imageLinks')
+
+                        new_book = Book(
+                            title=title,
+                            author=author,
+                            pub_date=pub_date,
+                            isbn=isbn,
+                            pages=pages,
+                            cover=cover,
+                            language=language
+                        )
+                        new_book.save()
+
+                        messages.success(request, "Dodano książkę: {}".format(new_book))
                 else:
-                    print('GugleApiView - post: 5')
                     messages.error(request, "błąd zapytania do gugli: ".format(response.status_code))
                     return redirect('aplikacjaKsiazkowa2:gugle')
-            except:
-                print('GugleApiView - post: 6')
+            except IntegrityError:
                 messages.error(request, "Błąd korzystania z gugleAPI - spróbuj ponownie")
                 return redirect('aplikacjaKsiazkowa2:gugle')
             else:
-                print('GugleApiView - post: 7')
                 print('\n')
                 return redirect('aplikacjaKsiazkowa2:lista')
+
 
 """
 class BookViewSet(viewsets.ModelViewSet):
