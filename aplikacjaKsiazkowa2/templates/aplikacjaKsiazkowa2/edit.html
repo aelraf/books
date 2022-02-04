@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container mv-5 mt-3">
-        <table class="table table-striped table-bordered mydatatable" style="width: 100%">
+    <!--div-- class="container mv-5 mt-3">
+        <table class="table table-striped table-bordered" style="width: 100%">
 	        <thead>
                 <tr>
                     <th>Id</th>
@@ -67,22 +67,36 @@
                 </form>
             </tfoot>
 	    </table>
-    </div>
+    </div-->
 
-        <div class="layout__body">
-            <form>
-                {% csrf_token %}
+<div class="container" style="margin: 2px">
+    <table class="table table-striped table-bordered" style="width: 100%">
+        <thead>
+            <tr>
                 {% for field in form %}
-                    <div class="form__group">
-                        <label>
-                            {{ field.label }}
-                        </label>
-                        {{ field }}
-                    </div>
+                    <th>
+                        {{ field.label }}
+                    </th>
                 {% endfor %}
-            </form>
-        </div>
-
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for field in form %}
+                    <th>
+                        {{ field }}
+                    </th>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+    <div style="responsive">
+        <form action="{% url 'aplikacjaKsiazkowa2:edit_book' book.id %}" method="POST" id=book.id>
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Zapisz</button>
+        </form>
+    </div>
+</div>
 
 
 {% endblock %}
