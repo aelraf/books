@@ -180,12 +180,18 @@ class BookDeleteViewTest(TestCase):
         books = Book.objects.all()
         books_count = books.count()
 
+        delete_book = Book.objects.get(pk=1)
         response_ok = self.client.post(url)
+
+        self.assertNotIn(delete_book, books)
+        # przekierowuje nas do 'listy', więc dlatego status kodu 302
+        self.assertEqual(response_ok.status_code, 302)
+
         books_after_delete = Book.objects.all()
         count_after_delete = books_after_delete.count()
 
-        self.assertEqual(response_ok.status_code, 200)
         self.assertGreaterEqual(books_count, count_after_delete)
+        self.assertEqual(books_count, count_after_delete + 1)
 
     def test_delete_book_with_bad_id(self):
         url = reverse('aplikacjaKsiazkowa2:delete_book', kwargs={'pk': 100})

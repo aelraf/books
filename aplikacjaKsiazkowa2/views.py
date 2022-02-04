@@ -53,6 +53,13 @@ class BookDeleteView(DeleteView):
     template_name = 'aplikacjaKsiazkowa2/delete.html'
     success_url = 'aplikacjaKsiazkowa2/lista.html'
 
+    def post(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        book = Book.objects.get(id=pk)
+        print('BookDeleteView - usuwamy książkę o id: {}'.format(pk))
+        book.delete()
+        return redirect('aplikacjaKsiazkowa2:lista')
+
 
 """
 class BookViewSet(viewsets.ModelViewSet):

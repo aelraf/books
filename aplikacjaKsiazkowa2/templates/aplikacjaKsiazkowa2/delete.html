@@ -5,16 +5,29 @@ Usuwanie książek
 {% endblock %}
 
 {% block content %}
-    <div class="layout__body">
-       <form class="form" method="POST" action="">
-           {% csrf_token %}
-           <div class="form__group">
-               <p>Czy na pewno chcesz usunąć "{{ book }}"</p>
-           </div>
+<main class="delete-item layout">
+    <div class="container">
+        <div class="layout__box">
+            <div class="layout__body">
+               <form class="form" method="POST" action="">
+                   {% csrf_token %}
+                   <div class="form__group">
+                       <p>Czy na pewno chcesz usunąć: <br> "{{ book }}"</p>
+                   </div>
 
-           <div class="for__group">
-               <input class="btn btn--main" type="submit" value="Potwierdź" />
-           </div>
-       </form>
+                   <div class="form__group">
+                       <input class="btn btn-danger" type="submit" value="Tak, usuwam książkę" />
+                   </div>
+               </form>
+
+               <form class="form" method="GET" action="{% url 'aplikacjaKsiazkowa2:lista' %}">
+                   {% csrf_token %}
+                   <div class="form__group">
+                       <input class="btn btn-warning" type="submit" value="Nie, wracam do głównej strony" />
+                   </div>
+               </form>
+            </div>
+        </div>
     </div>
+</main>
 {% endblock %}
