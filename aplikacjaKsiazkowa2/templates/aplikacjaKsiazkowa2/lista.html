@@ -36,7 +36,7 @@
                                 <th scope="row">{{ book.cover }}</th>
                                 <th scope="row">{{ book.language }}</th>
                                 <th scope="row">
-                                    <form action="">
+                                    <form action="{% url 'aplikacjaKsiazkowa2:edit_book' pk=book.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-warning">
                                             Edytuj
@@ -70,6 +70,20 @@
                     </tfoot>
                 </table>
             </div>
+        </div>
+
+        <div class="layout__body">
+            <form>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form__group">
+                        <label>
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+            </form>
         </div>
 
 

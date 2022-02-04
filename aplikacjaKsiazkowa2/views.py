@@ -10,6 +10,7 @@ from django.views.generic import UpdateView, CreateView, DeleteView
 from rest_framework import viewsets
 
 from aplikacjaKsiazkowa2.models import Book
+from .forms import BookForm
 from .serializer import BookSerializer
 
 
@@ -39,14 +40,13 @@ class BookCreateView(CreateView):
                 cover=request.POST.get('cover'),
                 language=request.POST.get('language')
             )
-            print("BookCreateView: post: new_book: {}, created: {} ".format(new_book, created))
             if created is False:
-                messages.error("Błąd dodawania książki")
+                messages.error(request, "Błąd dodawania książki")
                 return render(request, 'aplikacjaKsiazkowa2/add_book.html')
         except ValidationError:
-            messages.error("Błąd dodawania książki")
+            messages.error(request, "Błąd dodawania książki")
             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-        finally:
+        else:
             return redirect('aplikacjaKsiazkowa2:lista')
 
 
@@ -58,7 +58,6 @@ class BookDeleteView(DeleteView):
     def post(self, request, *args, **kwargs):
         pk = kwargs['pk']
         book = Book.objects.get(id=pk)
-        print('BookDeleteView - usuwamy książkę o id: {}'.format(pk))
         book.delete()
         return redirect('aplikacjaKsiazkowa2:lista')
 
@@ -68,8 +67,43 @@ class BookUpdateView(UpdateView):
     model = Book
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/edit.html'
-    context_object_name = 'books_data'
+    # context_object_name = 'books_data'
     success_url = 'aplikacjaKsiazkowa2/lista.html'
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        try:
+            book = Book.objects.get(pk=pk)
+        except KeyError:
+            messages.error(request, "Błąd aktualizacji ksiażki - KeyError!")
+            return redirect('aplikacjaKsiazkowa2:lista')
+        except:
+            messages.error(request, "Błąd aktualizacji ksiażki - książki o takim id nie ma w bazie!")
+            return redirect('aplikacjaKsiazkowa2:lista')
+        else:
+            form = BookForm(instance=book)
+            context = {'form': form, 'book': book}
+
+            return render(request, 'aplikacjaKsiazkowa2/edit.html', context)
+
+    def post(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        book = Book.objects.get(pk=pk)
+        try:
+            book.title = request.POST.get('title')
+            book.author = request.POST.get('author')
+            book.pub_date = request.POST.get('pub_date')
+            book.isbn = request.POST.get('isbn')
+            book.pages = request.POST.get('pages')
+            book.cover = request.POST.get('cover')
+            book.language = request.POST.get('language')
+        except ValidationError:
+            messages.error(request, "Błąd aktualizacji ksiażki - podaj poprawne dane!")
+            return redirect('aplikacjaKsiazkowa2:edit_book')
+        else:
+            book.save()
+
+            return redirect('aplikacjaKsiazkowa2:lista')
 
 
 class ListBookView(generic.ListView):
@@ -77,13 +111,7 @@ class ListBookView(generic.ListView):
     context_object_name = 'books_data'
     template_name = 'aplikacjaKsiazkowa2/lista.html'
     queryset = Book.objects.all()
-    # https://getbootstrap.com/docs/5.1/content/tables/
-    # https://www.dennisivy.com/post/django-class-based-views/
 
-    # def get_queryset(self):
-    #    books_data = Book.objects.all()
-    #    context = {'books_data': books_data}
-    #    return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['books_data'] = Book.objects.all()

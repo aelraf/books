@@ -2,7 +2,7 @@
 # mockowanie: https://www.20tab.com/en/blog/test-python-mocking/
 # i to: https://medium.com/kami-people/mocking-for-good-mocking-with-python-and-django-4d05cfda4fa3
 # i https://yeraydiazdiaz.medium.com/what-the-mock-cheatsheet-mocking-in-python-6a71db997832
-from django.core.exceptions import ValidationError
+# from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 from django.test import TestCase
 from django.urls import reverse
@@ -45,30 +45,6 @@ def create_przechrzta():
         cover="https://s.lubimyczytac.pl/upload/books/47000/47695/352x500.jpg",
         language="PL"
     )
-
-
-"""
-class BookUpdateViewTests(TestCase):
-    def test_update_book_get(self):
-        book = create_brzechwa()
-
-        response = self.client.get(reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'id': 1}))
-        self.assertEqual(response.status_code, 200)
-
-    def test_update_book_post(self):
-        book = create_brzechwa()
-
-        url = reverse('aplikacjaKsiazkowa2:edit_book',  kwargs={'id': 1})
-        response = self.client.post(url, {
-            'title': "Brzechwa misiom i innym",
-            'author': book.author,
-            'pub_date': book.pub_date,
-            'isbn': book.isbn,
-            'pages': book.pages,
-            'cover': book.cover,
-            'language': book.language
-        })
-        self.assertEqual(response.status_code, 200)"""
 
 
 class IndexViewTests(TestCase):
@@ -121,8 +97,11 @@ class ListViewTests(TestCase):
         )
         self.assertNotIn(new_book, response.context['books_data'])
 
-    # def test_list_choose_date(self):
-    #     response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
+
+class ListClassViewChooseDataTests(TestCase):
+    def test_list_choose_data(self):
+        response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
+        self.assertEqual(response.status_code, 200)
 
 
 class BookCreateViewTests(TestCase):
@@ -174,7 +153,7 @@ class BookCreateViewTests(TestCase):
             'language': 'pl'
         }
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
         # self.assertRaises(ValidationError, BookCreateView.post, kwargs=book)
 
@@ -230,5 +209,31 @@ class BookUpdateViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    def test_update_book_with_bad_id(self):
+        url = reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'pk': 100})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 302)
+
     def test_update_book_with_good_id_and_data(self):
-        pass
+        url = reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'pk': 1})
+        pages = 136
+        book = {
+            'title': "Brzechwa misiom i innym",
+            'author': "Jan Brzechwa",
+            'pub_date': "2011-01-01",
+            'isbn': "53387501243KS",
+            'pages': pages,
+            'cover': "https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+            'language': "PL"
+        }
+
+        response = self.client.post(url, book)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIs(Book.objects.filter(title=book['title']).exists(), True)
+
+
+
+
+

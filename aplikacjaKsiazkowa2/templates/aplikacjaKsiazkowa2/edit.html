@@ -36,25 +36,25 @@
                    <tr>
                    	  <th scope="row">{{ book.id }}</th>
                       <th>
-                          <input type="text" class="form-control" id="title" placeholder="{{ book.title }}" name="title" value="{{ book.title }}">
+                          <input type="text" class="form-control" id="title" name="title" value="{{ book.title }}">
               		  </th>
                       <th>
-                          <input type="text" class="form-control" id="author" placeholder="Autor" name="author" value="{{ book.author }}">
+                          <input type="text" class="form-control" id="author" name="author" value="{{ book.author }}">
                       </th>
                       <th>
-                          <input type="date" class="form-control" id="pub_date" placeholder="Data publikacji" name="pub_date" content="{{ book.pub_date }}" value="{{ book.pub_date }}">
+                          <input type="date" class="form-control" id="pub_date" name="pub_date" value="{{ book.pub_date }}">
                       </th>
                       <th>
-                          <input type="text" class="form-control" id="isbn" placeholder="ISBN" name="isbn" value="{{ book.isbn }}">
+                          <input type="text" class="form-control" id="isbn" name="isbn" value="{{ book.isbn }}">
                       </th>
                       <th>
-                          <input type="number" class="form-control" id="pages" placeholder="Liczba stron" name="pages" content="{{ book.pages }}" value="{{ book.pages }">
+                          <input type="number" class="form-control" id="pages" name="pages" value="{{ book.pages }">
                       </th>
                       <th>
-                          <input type="text" class="form-control" id="cover" placeholder="Link do okładki" name="cover" value="{{ book.cover }}">
+                          <input type="text" class="form-control" id="cover" name="cover" value="{{ book.cover }}">
                       </th>
                       <th>
-                          <input type="text" class="form-control" id="language" placeholder="Język" name="language" value="{{ book.language }}">
+                          <input type="text" class="form-control" id="language" name="language" value="{{ book.language }}">
                       </th>
                       <th>
                            <div>
@@ -68,32 +68,8 @@
             </tfoot>
 	    </table>
     </div>
-    <div class="container">
-        <form action="{% url 'aplikacjaKsiazkowa2:index' %}">
-            <div>
-                <button type="submit" class="btn btn-primary">Strona główna</button>
-            </div>
-        </form>
-        <br>
-        <form action="{% url 'aplikacjaKsiazkowa2:lista' %}">
-            <div>
-                <button type="submit" class="btn btn-primary">Lista książek</button>
-            </div>
-        </form>
-        <br>
-        <form action="{% url 'aplikacjaKsiazkowa2:add_book' %}">
-            <div>
-                <button type="submit" class="btn btn-primary">Nowa książka</button>
-            </div>
-        </form>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.botstrap4.min.js"></script>
 
 {% endblock %}
 
