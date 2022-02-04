@@ -69,6 +69,20 @@
 	    </table>
     </div>
 
+        <div class="layout__body">
+            <form>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form__group">
+                        <label>
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+            </form>
+        </div>
+
 
 
 {% endblock %}

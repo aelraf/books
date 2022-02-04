@@ -72,20 +72,6 @@
             </div>
         </div>
 
-        <div class="layout__body">
-            <form>
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="form__group">
-                        <label>
-                            {{ field.label }}
-                        </label>
-                        {{ field }}
-                    </div>
-                {% endfor %}
-            </form>
-        </div>
-
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
