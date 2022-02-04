@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import requests
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
@@ -139,18 +139,52 @@ class ListBookView(generic.ListView):
         return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
 
-class GugleApiView(generic.ListView):
+class GugleApiView(generic.View):
     model = Book
     context_object_name = 'books_data'
     template_name = 'aplikacjaKsiazkowa2/gugleApi.html'
 
+    def get(self, request):
+        return render(request, 'aplikacjaKsiazkowa2/gugleApi.html')
+
     def post(self, request):
         print('GugleApiView - post: 1')
-        if 'terms' in request.POST:
+        lista = {'title', 'author', 'pub_date', 'isbn', 'pages', 'cover', 'language'}
+        if 'book_from_api' in request.POST:
             print('GugleApiView - post: 2')
 
-            print('\n')
-            return redirect('aplikacjaKsiazkowa2:lista')
+            book_from_gugle = request.POST.get('book_from_api')
+            url_looking = 'https://www.googleapis.com/books/v1/volumes?q=' + book_from_gugle
+
+            try:
+                print('GugleApiView - post: 3')
+                response = requests.get(url_looking)
+                if response.status_code == 200:
+                    print('GugleApiView - post: 4')
+                    books_data = response.json()
+                    for book in books_data['items']:
+                        volume = book['volumeInfo']
+                        for l in lista:
+                            if l in volume:
+                                print("lista: {} - {}".format(l, volume.get(l)))
+
+                        if volume.get('authors') is not None:
+                            author = volume['authors'][0]
+                        else:
+                            author = "Autorzy nieznani"
+
+                else:
+                    print('GugleApiView - post: 5')
+                    messages.error(request, "błąd zapytania do gugli: ".format(response.status_code))
+                    return redirect('aplikacjaKsiazkowa2:gugle')
+            except:
+                print('GugleApiView - post: 6')
+                messages.error(request, "Błąd korzystania z gugleAPI - spróbuj ponownie")
+                return redirect('aplikacjaKsiazkowa2:gugle')
+            else:
+                print('GugleApiView - post: 7')
+                print('\n')
+                return redirect('aplikacjaKsiazkowa2:lista')
 
 """
 class BookViewSet(viewsets.ModelViewSet):

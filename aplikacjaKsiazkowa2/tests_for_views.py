@@ -293,27 +293,29 @@ class GugleApiViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_gugle_api_post(self):
-        terms = 'Hobbit'
+        book_from_api = 'Hobbit'
         url = reverse('aplikacjaKsiazkowa2:gugle')
-        context = {'terms': terms}
+        context = {'book_from_api': book_from_api}
         response = self.client.post(url, context)
 
         self.assertEqual(response.status_code, 302)
 
-    def test_gugle_api_with_real_google(self):
-        terms = 'Hobbit'
+
+class GugleApiViewTestOnlyWithRealUsingGugleApi(TestCase):
+    def test_gugle_api_with_only_test_with_real_google(self):
+        book_from_api = 'Hobbit'
         url = reverse('aplikacjaKsiazkowa2:gugle')
-        context = {'terms': terms}
+        context = {'book_from_api': book_from_api}
         response = self.client.post(url, context)
 
         self.assertEqual(response.status_code, 302)
 
         books = Book.objects.all()
-        books_count = books.count
+        books_count = books.count()
 
         self.assertNotEqual(books_count, 0)
-        self.assertIs(books_count, 2)
+        self.assertEqual(books_count, 10)
 
-        if_book_exist = Book.objects.filter(title=terms).exists()
+        if_book_exist = Book.objects.filter(title=book_from_api).exists()
 
         self.assertIs(if_book_exist, True)
