@@ -252,15 +252,6 @@ class BookUpdateViewTests(TestCase):
 
     def test_update_book_without_post_data(self):
         url = reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'pk': 1})
-        book = {
-            'title': "Brzechwa dzieciom",
-            'author': "Jan Brzechwa",
-            'pub_date': "2011-01-01",
-            'isbn': "53387501243KS",
-            'pages': 136,
-            'cover': "https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-            'language': "PL"
-        }
         response = self.client.post(url)
         title = "Brzechwa dzieciom"
 
@@ -268,8 +259,9 @@ class BookUpdateViewTests(TestCase):
         self.assertIs(Book.objects.filter(title=title).exists(), True)
 
 
+class GugleApiViewTests(TestCase):
+    def test_gugle_response(self):
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        response = self.client.get(url)
 
-
-
-
-
+        self.assertEqual(response.status_code, 200)

@@ -15,7 +15,7 @@
 from django.urls import path
 from . import views
 
-from .views import ListBookView, IndexView, BookCreateView, BookDeleteView
+from .views import ListBookView, IndexView, BookCreateView, BookDeleteView, GugleApiView
 
 app_name = 'aplikacjaKsiazkowa2'
 urlpatterns = [
@@ -24,4 +24,5 @@ urlpatterns = [
     path('edit_book/<str:pk>', views.BookUpdateView.as_view(), name='edit_book'),
     path('delete/<str:pk>', BookDeleteView.as_view(), name='delete_book'),
     path('lista', ListBookView.as_view(), name='lista'),
+    path('gugle', GugleApiView.as_view(), name='gugle'),
 ]

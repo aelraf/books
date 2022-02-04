@@ -91,19 +91,19 @@ class BookUpdateView(UpdateView):
         pk = kwargs['pk']
         book = Book.objects.get(pk=pk)
         try:
-            if request.POST.get('title') is not None:
+            if 'title' in request.POST:
                 book.title = request.POST.get('title')
-            if request.POST.get('author') is not None:
+            if 'author' in request.POST:
                 book.author = request.POST.get('author')
-            if request.POST.get('pub_date') is not None:
+            if 'pub_date' in request.POST:
                 book.pub_date = request.POST.get('pub_date')
-            if request.POST.get('isbn') is not None:
+            if 'isbn' in request.POST:
                 book.isbn = request.POST.get('isbn')
-            if request.POST.get('pages') is not None:
+            if 'pages' in request.POST:
                 book.pages = request.POST.get('pages')
-            if request.POST.get('cover') is not None:
+            if 'cover' in request.POST:
                 book.cover = request.POST.get('cover')
-            if request.POST.get('language') is not None:
+            if 'language' in request.POST:
                 book.language = request.POST.get('language')
         except ValidationError:
             messages.error(request, "Błąd aktualizacji ksiażki - podaj poprawne dane!")
@@ -134,9 +134,15 @@ class ListBookView(generic.ListView):
 
         q = request.POST.get('q') if request.POST.get('q') is not None else ''
 
-        context = {'books_data': data }
+        context = {'books_data': data}
         print('\n lista - POST - koniec \n')
         return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+
+
+class GugleApiView(generic.ListView):
+    model = Book
+    context_object_name = 'books_data'
+    template_name = 'aplikacjaKsiazkowa2/gugleApi.html'
 
 
 """
