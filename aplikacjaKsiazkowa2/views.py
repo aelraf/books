@@ -88,35 +88,33 @@ class BookUpdateView(UpdateView):
             return render(request, 'aplikacjaKsiazkowa2/edit.html', context)
 
     def post(self, request, *args, **kwargs):
-        print('UpdateBook: 1')
         pk = kwargs['pk']
         book = Book.objects.get(pk=pk)
-        print('UpdateBook: 2')
         try:
-            print('UpdateBook: 3')
-            book.title = request.POST.get('title')
-            book.author = request.POST.get('author')
-            book.pub_date = request.POST.get('pub_date')
-            book.isbn = request.POST.get('isbn')
-            book.pages = request.POST.get('pages')
-            book.cover = request.POST.get('cover')
-            book.language = request.POST.get('language')
-            print('UpdateBook: 4')
+            if request.POST.get('title') is not None:
+                book.title = request.POST.get('title')
+            if request.POST.get('author') is not None:
+                book.author = request.POST.get('author')
+            if request.POST.get('pub_date') is not None:
+                book.pub_date = request.POST.get('pub_date')
+            if request.POST.get('isbn') is not None:
+                book.isbn = request.POST.get('isbn')
+            if request.POST.get('pages') is not None:
+                book.pages = request.POST.get('pages')
+            if request.POST.get('cover') is not None:
+                book.cover = request.POST.get('cover')
+            if request.POST.get('language') is not None:
+                book.language = request.POST.get('language')
         except ValidationError:
-            print('UpdateBook: 5 - ValidationError')
             messages.error(request, "Błąd aktualizacji ksiażki - podaj poprawne dane!")
             return redirect('aplikacjaKsiazkowa2:edit_book')
         else:
-            print('UpdateBook: 6')
             try:
                 book.save()
-                print('UpdateBook: 7')
             except IntegrityError:
-                print('UpdateBook: 8 - IntegrityError')
                 messages.error(request, "Błąd aktualizacji ksiażki - IntegrityError")
                 return redirect('aplikacjaKsiazkowa2:edit_book')
             else:
-                print('UpdateBook: 9 \n\n')
                 return redirect('aplikacjaKsiazkowa2:lista')
 
 
