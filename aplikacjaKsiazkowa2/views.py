@@ -44,6 +44,8 @@ class BookCreateView(CreateView):
             if created is False:
                 messages.error(request, "Błąd dodawania książki")
                 return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+            else:
+                messages.success(request, "Dodano książkę: {}".format(new_book))
         except ValidationError:
             messages.error(request, "Błąd dodawania książki: {}".format(ValidationError))
             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
@@ -60,6 +62,7 @@ class BookDeleteView(DeleteView):
         pk = kwargs['pk']
         book = Book.objects.get(id=pk)
         book.delete()
+        messages.success(request, "Usunięto książkę: {}".format(book))
         return redirect('aplikacjaKsiazkowa2:lista')
 
 
@@ -111,6 +114,7 @@ class BookUpdateView(UpdateView):
         else:
             try:
                 book.save()
+                messages.success(request, "Zaktualizowano książkę: {}".format(book))
             except IntegrityError:
                 messages.error(request, "Błąd aktualizacji ksiażki - IntegrityError")
                 return redirect('aplikacjaKsiazkowa2:edit_book')
