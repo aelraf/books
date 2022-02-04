@@ -129,7 +129,7 @@ class ListBookView(generic.ListView):
         context['books_data'] = Book.objects.all()
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         data = Book.objects.order_by('id')
 
         q = request.POST.get('q') if request.POST.get('q') is not None else ''
@@ -144,6 +144,13 @@ class GugleApiView(generic.ListView):
     context_object_name = 'books_data'
     template_name = 'aplikacjaKsiazkowa2/gugleApi.html'
 
+    def post(self, request):
+        print('GugleApiView - post: 1')
+        if 'terms' in request.POST:
+            print('GugleApiView - post: 2')
+
+            print('\n')
+            return redirect('aplikacjaKsiazkowa2:lista')
 
 """
 class BookViewSet(viewsets.ModelViewSet):

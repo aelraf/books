@@ -259,9 +259,61 @@ class BookUpdateViewTests(TestCase):
         self.assertIs(Book.objects.filter(title=title).exists(), True)
 
 
+def mock_good_gugle_api() -> dict:
+    book = {
+        'title': "Brzechwa dzieciom",
+        'author': "Jan Brzechwa",
+        'pub_date': "2011-01-01",
+        'isbn': "53387501243KS",
+        'pages': 136,
+        'cover': "https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+        'language': "PL"
+    }
+    return book
+
+
+def mock_bad_gugle_api() -> dict:
+    book = {
+        'title': "Tuwim starym",
+        'author': 213,
+        'pub_date': "01-01-2345",
+        'isbn': "53387501243KS",
+        'pages': '136',
+        'cover': "https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
+        'language': "PL"
+    }
+    return book
+
+
 class GugleApiViewTests(TestCase):
     def test_gugle_response(self):
         url = reverse('aplikacjaKsiazkowa2:gugle')
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
+
+    def test_gugle_api_post(self):
+        terms = 'Hobbit'
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        context = {'terms': terms}
+        response = self.client.post(url, context)
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_gugle_api_with_real_google(self):
+        terms = 'Hobbit'
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        context = {'terms': terms}
+        response = self.client.post(url, context)
+
+        self.assertEqual(response.status_code, 302)
+
+        books = Book.objects.all()
+        books_count = books.count
+
+        self.assertNotEqual(books_count, 0)
+        self.assertIs(books_count, 2)
+
+        if_book_exist = Book.objects.filter(title=terms).exists()
+
+        self.assertIs(if_book_exist, True)
