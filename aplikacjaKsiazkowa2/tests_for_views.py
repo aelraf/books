@@ -171,3 +171,27 @@ class BookDeleteViewTest(TestCase):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:delete_book', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
 
+    def test_delete_book_with_good_id(self):
+        url = reverse('aplikacjaKsiazkowa2:delete_book', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+        books = Book.objects.all()
+        books_count = books.count()
+
+        response_ok = self.client.post(url)
+        books_after_delete = Book.objects.all()
+        count_after_delete = books_after_delete.count()
+
+        self.assertEqual(response_ok.status_code, 200)
+        self.assertGreaterEqual(books_count, count_after_delete)
+
+    def test_delete_book_with_bad_id(self):
+        url = reverse('aplikacjaKsiazkowa2:delete_book', kwargs={'pk': 100})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+
+
