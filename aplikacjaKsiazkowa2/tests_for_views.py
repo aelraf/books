@@ -2,11 +2,13 @@
 # mockowanie: https://www.20tab.com/en/blog/test-python-mocking/
 # i to: https://medium.com/kami-people/mocking-for-good-mocking-with-python-and-django-4d05cfda4fa3
 # i https://yeraydiazdiaz.medium.com/what-the-mock-cheatsheet-mocking-in-python-6a71db997832
+from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 from django.test import TestCase
 from django.urls import reverse
 
 from aplikacjaKsiazkowa2.models import Book
+from aplikacjaKsiazkowa2.views import BookCreateView
 
 
 def create_brzechwa():
@@ -158,7 +160,23 @@ class BookCreateViewTests(TestCase):
         books = Book.objects.all()
         books_count = books.count()
 
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(1, books_count)
+
+    def test_add_book_with_bad_data(self):
+        book = {
+            'title': 12345,
+            'author': "Mikołaj Gogol Jan Kowalski Edward Nowak",
+            'pub_date': '01-12-3456',
+            'isbn': '9788375654332',
+            'pages': '424',
+            'cover': 'qwer1234',
+            'language': 'pl'
+        }
+        response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
+        self.assertEqual(response.status_code, 302)
+
+        # self.assertRaises(ValidationError, BookCreateView.post, kwargs=book)
 
 
 class BookDeleteViewTest(TestCase):
@@ -200,4 +218,17 @@ class BookDeleteViewTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class BookUpdateViewTests(TestCase):
+    def setUp(self) -> None:
+        create_brzechwa()
+        create_tolkien()
+        create_przechrzta()
 
+    def test_update_book_response(self):
+        url = reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_book_with_good_id_and_data(self):
+        pass

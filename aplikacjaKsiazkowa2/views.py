@@ -29,23 +29,25 @@ class BookCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         title = request.POST.get('title')
-        new_book, created = Book.objects.get_or_create(
-            title=title,
-            author=request.POST.get('author'),
-            pub_date=request.POST.get('pub_date'),
-            isbn=request.POST.get('isbn'),
-            pages=request.POST.get('pages'),
-            cover=request.POST.get('cover'),
-            language=request.POST.get('language')
-        )
-        if created is False:
+        try:
+            new_book, created = Book.objects.get_or_create(
+                title=title,
+                author=request.POST.get('author'),
+                pub_date=request.POST.get('pub_date'),
+                isbn=request.POST.get('isbn'),
+                pages=request.POST.get('pages'),
+                cover=request.POST.get('cover'),
+                language=request.POST.get('language')
+            )
+            print("BookCreateView: post: new_book: {}, created: {} ".format(new_book, created))
+            if created is False:
+                messages.error("Błąd dodawania książki")
+                return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+        except ValidationError:
             messages.error("Błąd dodawania książki")
             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-
-        print("BookCreateView: post: new_book: {}, created: {} ".format(new_book, created))
-
-        # return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-        return redirect('aplikacjaKsiazkowa2:lista')
+        finally:
+            return redirect('aplikacjaKsiazkowa2:lista')
 
 
 class BookDeleteView(DeleteView):
@@ -61,22 +63,13 @@ class BookDeleteView(DeleteView):
         return redirect('aplikacjaKsiazkowa2:lista')
 
 
-"""
-class BookViewSet(viewsets.ModelViewSet):
-    # początek widoku ogólnego REST API za widok my_api 
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-
-
 class BookUpdateView(UpdateView):
-    # drugi widok klasowy w zamian za metodę edit() 
+    # drugi widok klasowy w zamian za metodę edit()
     model = Book
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/edit.html'
     context_object_name = 'books_data'
     success_url = 'aplikacjaKsiazkowa2/lista.html'
-
-"""
 
 
 class ListBookView(generic.ListView):
@@ -106,10 +99,9 @@ class ListBookView(generic.ListView):
         return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
 
-
-
-
-
-
-
-
+"""
+class BookViewSet(viewsets.ModelViewSet):
+    # początek widoku ogólnego REST API za widok my_api 
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+"""
