@@ -98,6 +98,19 @@ class ListViewTests(TestCase):
         self.assertNotIn(new_book, response.context['books_data'])
 
 
+class ListViewChoosingDataTests(TestCase):
+    def setUp(self) -> None:
+        create_brzechwa()
+        create_tolkien()
+        create_przechrzta()
+
+    def test_list_post(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, 200)
+
+
 class ListClassViewChooseDataTests(TestCase):
     def test_list_choose_data(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))

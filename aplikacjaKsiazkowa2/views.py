@@ -2,6 +2,7 @@
 import requests
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
@@ -134,11 +135,16 @@ class ListBookView(generic.ListView):
         return context
 
     def post(self, request):
-        data = Book.objects.order_by('id')
-
         q = request.POST.get('q') if request.POST.get('q') is not None else ''
+        q2 = request.POST.get('q2') if request.POST.get('q2') is not None else ''
+        p = request.POST.get('p') if request.POST.get('p') is not None else ''
+        books_data = Book.objects.filter(
+            Q(title__icontains=q) |
+            Q(author__icontains=q2) |
+            Q(language__icontains=p)
+        )
 
-        context = {'books_data': data}
+        context = {'books_data': books_data}
         print('\n lista - POST - koniec \n')
         return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
