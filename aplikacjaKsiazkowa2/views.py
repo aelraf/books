@@ -251,7 +251,7 @@ class GugleApiView(generic.View):
                     messages.error(request, "błąd zapytania do gugli: ".format(response.status_code))
                     return redirect('aplikacjaKsiazkowa2:gugle')
             except IntegrityError as err:
-                messages.error(request, "Błąd korzystania z gugleAPI - spróbuj ponownie: {}".format(err) )
+                messages.error(request, "Błąd korzystania z gugleAPI - spróbuj ponownie: {}".format(err))
                 return redirect('aplikacjaKsiazkowa2:gugle')
             except ValidationError as err:
                 messages.error(request, "Błąd korzystania z gugleAPI - spróbuj ponownie: {}".format(err))

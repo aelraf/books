@@ -5,7 +5,7 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.get_route),
-    path('books', views.get_books),
-    path('books/<str:pk>', views.get_book),
+    path('api', views.get_route),
+    path('api/books', views.get_books),
+    path('api/books/<str:pk>', views.get_book),
 ]
