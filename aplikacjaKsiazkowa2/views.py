@@ -43,16 +43,20 @@ class BookCreateView(CreateView):
                 cover=request.POST.get('cover') if 'cover' in request.POST else "",
                 language=request.POST.get('language') if 'language' in request.POST else ""
             )
-            print('dodajemy ksiazke: {} \n'.format(new_book))
             if created is False:
                 messages.error(request, "Błąd dodawania książki")
                 print('blad dodawania ksiazki: created: {}, book: {}'.format(created, new_book))
                 return render(request, 'aplikacjaKsiazkowa2/add_book.html')
             else:
                 messages.success(request, "Dodano książkę: {}".format(new_book))
+                print('dodajemy ksiazke: {} \n'.format(new_book))
         except ValidationError as err:
+            messages.error(request, "Błąd dodawania książki: {}".format(err.message))
+            print('Validation Error podczas dodawania ksiazki: {}, {}'.format(err.message, err.params))
+            return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+        except IntegrityError as err:
             messages.error(request, "Błąd dodawania książki: {}".format(err))
-            print('Validation Error podczas dodawania ksiazki: {}'.format(ValidationError))
+            print('IntegrityErr podczas dodawania ksiazki: {}'.format(err))
             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
         else:
             return redirect('aplikacjaKsiazkowa2:lista')
@@ -153,10 +157,10 @@ class ListBookView(generic.ListView):
                 Q(pub_date__range=(d1, d2))
             )
             context = {'books_data': books_data}
-            print("post - context \n {}".format(context))
+            # print("post - context \n {}".format(context))
         except ValidationError as err:
             messages.error(request, "Wyszukiwanie książek - validationError: {}".format(err))
-            print('Validation error w listowaniu wyników')
+            print('Validation error w listowaniu wyników {}'.format(err.message))
             return redirect('aplikacjaKsiazkowa2:lista')
         else:
             return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)

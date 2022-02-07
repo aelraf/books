@@ -185,14 +185,25 @@ class BookCreateViewTests(TestCase):
         book = {
             'title': 12345,
             'author': "Mikołaj Gogol Jan Kowalski Edward Nowak",
-            'pub_date': '01-12-3456',
+            'pub_date': '3456-12-01',
         }
 
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
         books_count = Book.objects.all().count()
-        self.assertEqual(2, books_count)
+        self.assertEqual(1, books_count)
+
+    def test_add_book_without_not_null_data(self):
+        book = {
+            'title': 'wszyscy ludzie prezydenta',
+            'pub_date': "2021-02-02",
+            'pages': 1234,
+            'language': 'pl'
+        }
+
+        response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
+        self.assertEqual(response.status_code, 302)
 
 
 class BookDeleteViewTest(TestCase):
