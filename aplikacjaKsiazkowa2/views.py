@@ -84,7 +84,7 @@ class BookUpdateView(UpdateView):
     success_url = 'aplikacjaKsiazkowa2/lista.html'
 
     def get(self, request, *args, **kwargs):
-        pk = kwargs['pk']
+        pk = kwargs['pk'] if 'pk' in kwargs else ''
         try:
             book = Book.objects.get(pk=pk)
         except KeyError as err:
@@ -100,7 +100,7 @@ class BookUpdateView(UpdateView):
             return render(request, 'aplikacjaKsiazkowa2/edit.html', context)
 
     def post(self, request, *args, **kwargs):
-        pk = kwargs['pk']
+        pk = kwargs['pk'] if 'pk' in kwargs else ''
         book = Book.objects.get(pk=pk)
         try:
             if 'title' in request.POST:

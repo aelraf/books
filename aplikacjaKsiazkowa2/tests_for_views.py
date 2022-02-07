@@ -125,6 +125,30 @@ class ListViewChoosingDataTests(TestCase):
         self.assertQuerysetEqual(response.context['books_data'], [hobbit])
 
     def test_list_post_with_language(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        choosen = {'p': 'pl'}
+        response = self.client.post(url, choosen)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Hobbit")
+        self.assertContains(response, "Brzechwa")
+        self.assertContains(response, "Przechrzta")
+        self.assertNotContains(response, "Hemar")
+
+        result = Book.objects.filter(language__icontains='pl')
+        result_count = result.count()
+        response_count = response.context['books_data'].count()
+
+        self.assertQuerysetEqual(response.context['books_data'], result)
+        self.assertEqual(result_count, response_count)
+
+    def test_list_post_with_both_date(self):
+        pass
+
+    def test_list_post_with_one_date(self):
+        pass
+
+    def test_list_post_with_author(self):
         pass
 
 
