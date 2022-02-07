@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+
 # mockowanie: https://www.20tab.com/en/blog/test-python-mocking/
 # i to: https://medium.com/kami-people/mocking-for-good-mocking-with-python-and-django-4d05cfda4fa3
 # i https://yeraydiazdiaz.medium.com/what-the-mock-cheatsheet-mocking-in-python-6a71db997832
-# from django.core.exceptions import ValidationError
+
 from django.db.models import QuerySet
 from django.test import TestCase
 from django.urls import reverse
 
 from aplikacjaKsiazkowa2.models import Book
-from aplikacjaKsiazkowa2.views import BookCreateView
 
 
 def create_brzechwa():
