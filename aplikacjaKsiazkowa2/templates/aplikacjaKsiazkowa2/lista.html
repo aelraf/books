@@ -72,6 +72,38 @@
             </div>
         </div>
 
+        <div class="search_book">
+            <div class="mobile-menu">
+                <form action="{% url 'aplikacjaKsiazkowa2:lista' %}" method="POST">
+                    <div>
+                        {% csrf_token %}
+                        <label>
+                            <input name="title" placeholder="Wyszukaj tytuł...">
+                        </label>
+                        <br>
+                        <label>
+                            <input name="author" placeholder="Wyszukaj autora...">
+                        </label>
+                        <br>
+                        <label>
+                            <input name="language" placeholder="Wyszukaj język...">
+                        </label>
+                        <br>
+                        <label>
+                            Początek zakresu daty: <input name="d1" type="date" placeholder="Data początkowa...">
+                            <br>
+                            Koniec zakresu daty: <input name="d2" type="date" placeholder="Data końcowa">
+                        </label>
+                        <br>
+                        <div class="mobile-menuItems">
+                            <button type="submit" class="btn btn-primary">Zastosuj filtry</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>

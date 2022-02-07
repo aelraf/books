@@ -9,11 +9,8 @@ from django.contrib import messages
 from django.views import generic
 from django.views.generic import UpdateView, CreateView, DeleteView
 
-from rest_framework import viewsets
-
 from aplikacjaKsiazkowa2.models import Book
 from .forms import BookForm
-from .serializer import BookSerializer
 
 
 class IndexView(generic.ListView):
@@ -153,18 +150,22 @@ class ListBookView(generic.ListView):
             if title != "":
                 books_data = Book.objects.filter(Q(title__icontains=title))
                 context = {'books_data': books_data}
+                messages.success(request, "Wyszukiwanie po słowie kluczowym: {}".format(title))
                 return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
             if author != "":
                 books_data = Book.objects.filter(Q(author__icontains=author))
                 context = {'books_data': books_data}
+                messages.success(request, "Wyszukiwanie po słowie kluczowym: {}".format(author))
                 return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
             if language != "":
                 books_data = Book.objects.filter(Q(language__icontains=language))
                 context = {'books_data': books_data}
+                messages.success(request, "Wyszukiwanie po słowie kluczowym: {}".format(language))
                 return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
             if d1 != "" and d2 != "":
                 books_data = Book.objects.filter(Q(pub_date__range=(d1, d2)))
                 context = {'books_data': books_data}
+                messages.success(request, "Wyszukiwanie po przedziale dat: {} - {}".format(d1, d2))
                 return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
         except ValidationError as err:

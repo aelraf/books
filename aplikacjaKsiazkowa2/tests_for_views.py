@@ -117,8 +117,8 @@ class ListViewChoosingDataTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Hobbit")
-    #    self.assertNotContains(response, "Brzechwa")
-    #    self.assertNotContains(response, "Hemar")
+        self.assertNotContains(response, "Brzechwa")
+        self.assertNotContains(response, "Hemar")
 
         hobbit = Book.objects.filter(title__icontains='Hobbit')
 
