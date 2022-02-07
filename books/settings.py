@@ -43,7 +43,9 @@ ALLOWED_HOSTS = ['127.0.0.1', 'demo-books20211013.herokuapp.com']
 # dla Heroku:
 INSTALLED_APPS = [
     'aplikacjaKsiazkowa2.apps.Aplikacjaksiazkowa2Config',
+
     'rest_framework',
+
     'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -57,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
