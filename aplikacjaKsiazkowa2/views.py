@@ -138,15 +138,24 @@ class ListBookView(generic.ListView):
         q = request.POST.get('q') if request.POST.get('q') is not None else ''
         q2 = request.POST.get('q2') if request.POST.get('q2') is not None else ''
         p = request.POST.get('p') if request.POST.get('p') is not None else ''
-        books_data = Book.objects.filter(
-            Q(title__icontains=q) |
-            Q(author__icontains=q2) |
-            Q(language__icontains=p)
-        )
+        d1 = request.POST.get('d1') if request.POST.get('d1') is not None else ''
+        d2 = request.POST.get('d2') if request.POST.get('d2') is not None else ''
 
-        context = {'books_data': books_data}
-        print('\n lista - POST - koniec \n')
-        return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+        try:
+            books_data = Book.objects.filter(
+                Q(title__icontains=q) or
+                Q(author__icontains=q2) or
+                Q(language__icontains=p) or
+                Q(pub_date__range=(d1, d2))
+            )
+            context = {'books_data': books_data}
+            print("post - context \n {}".format(context))
+        except ValidationError:
+            messages.error(request, "Wyszukiwanie książek - validationError: {}".format(ValidationError))
+            print('Validation error w listowaniu wyników')
+            return redirect('aplikacjaKsiazkowa2:lista')
+        else:
+            return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
 
 class GugleApiView(generic.View):

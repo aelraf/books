@@ -110,11 +110,19 @@ class ListViewChoosingDataTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    def test_list_post_with_title(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        choosen = {'q': 'Hobbit'}
+        response = self.client.post(url, choosen)
 
-class ListClassViewChooseDataTests(TestCase):
-    def test_list_choose_data(self):
-        response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Hobbit")
+        self.assertNotContains(response, "Brzechwa")
+        self.assertNotContains(response, "Hemar")
+
+        hobbit = Book.objects.get(title__icontains='Hobbit')
+
+        self.assertQuerysetEqual(response.context['books_data'], [hobbit])
 
 
 class BookCreateViewTests(TestCase):
