@@ -259,11 +259,3 @@ class GugleApiView(generic.View):
             else:
                 print('\n')
                 return redirect('aplikacjaKsiazkowa2:lista')
-
-
-"""
-class BookViewSet(viewsets.ModelViewSet):
-    # początek widoku ogólnego REST API za widok my_api 
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-"""

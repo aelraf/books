@@ -31,8 +31,14 @@ class RESTApiTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 3)
+
     def test_my_api_books_with_pk(self):
         client = APIClient()
         response = client.get('http://127.0.0.1:8000/api/books/1')
 
         self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 8)
