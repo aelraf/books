@@ -112,21 +112,21 @@ class ListViewChoosingDataTests(TestCase):
 
     def test_list_post_with_title(self):
         url = reverse('aplikacjaKsiazkowa2:lista')
-        choosen = {'q': 'Hobbit'}
+        choosen = {'title': 'Hobbit'}
         response = self.client.post(url, choosen)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Hobbit")
-        self.assertNotContains(response, "Brzechwa")
-        self.assertNotContains(response, "Hemar")
+    #    self.assertNotContains(response, "Brzechwa")
+    #    self.assertNotContains(response, "Hemar")
 
-        hobbit = Book.objects.get(title__icontains='Hobbit')
+        hobbit = Book.objects.filter(title__icontains='Hobbit')
 
-        self.assertQuerysetEqual(response.context['books_data'], [hobbit])
+        self.assertQuerysetEqual(response.context['books_data'], hobbit)
 
     def test_list_post_with_language(self):
         url = reverse('aplikacjaKsiazkowa2:lista')
-        choosen = {'p': 'pl'}
+        choosen = {'language': 'pl'}
         response = self.client.post(url, choosen)
 
         self.assertEqual(response.status_code, 200)
@@ -145,12 +145,29 @@ class ListViewChoosingDataTests(TestCase):
     def test_list_post_with_empty_language(self):
         url = reverse('aplikacjaKsiazkowa2:lista')
         our_lang = 'eng'
-        choosen = {'language': our_lang, 'title': '', 'author': '', 'd1': '', 'd2': ''}
+        choosen = {'language': our_lang}
         response = self.client.post(url, choosen)
 
         self.assertEqual(response.status_code, 200)
 
         result = Book.objects.filter(language__icontains=our_lang)
+        result_count = result.count()
+        response_count = response.context['books_data'].count()
+
+        self.assertQuerysetEqual(response.context['books_data'], result)
+        self.assertEqual(result_count, response_count)
+
+    def test_list_post_with_author(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        choosen = {'author': 'Brzechwa'}
+        response = self.client.post(url, choosen)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, "Brzechwa")
+        self.assertContains(response, "Tolkien")
+
+        result = Book.objects.filter(author__icontains='Brzechwa')
         result_count = result.count()
         response_count = response.context['books_data'].count()
 
@@ -177,23 +194,6 @@ class ListViewChoosingDataTests(TestCase):
         response = self.client.post(url, choosen)
 
         self.assertEqual(response.status_code, 200)
-
-    def test_list_post_with_author(self):
-        url = reverse('aplikacjaKsiazkowa2:lista')
-        choosen = {'q2': 'Brzechwa'}
-        response = self.client.post(url, choosen)
-
-        self.assertEqual(response.status_code, 200)
-
-        self.assertContains(response, "Brzechwa")
-        self.assertContains(response, "Tolkien")
-
-        result = Book.objects.filter(author__icontains='Brzechwa')
-        result_count = result.count()
-        response_count = response.context['books_data'].count()
-
-        self.assertQuerysetEqual(response.context['books_data'], result)
-        self.assertEqual(result_count, response_count)
 
 
 class BookCreateViewTests(TestCase):

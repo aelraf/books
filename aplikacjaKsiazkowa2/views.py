@@ -149,21 +149,48 @@ class ListBookView(generic.ListView):
         d1 = request.POST.get('d1') if request.POST.get('d1') is not None else ''
         d2 = request.POST.get('d2') if request.POST.get('d2') is not None else ''
 
+        """if title is not None:
+            try:
+                books_data = Book.objects.filter(
+                    Q(title__icontains=title) and
+                    Q(author__icontains=author) and
+                    Q(language__icontains=language) or
+                    Q(pub_date__range=(d1, d2))
+                )
+                
+                context = {'books_data': books_data}
+                # print("post - context \n {}".format(context))
+            except ValidationError as err:
+                messages.error(request, "Wyszukiwanie książek - validationError: {}".format(err))
+                print('Validation error w listowaniu wyników {}'.format(err.message))
+                return redirect('aplikacjaKsiazkowa2:lista')
+            else:
+                return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)"""
+
         try:
-            books_data = Book.objects.filter(
-                Q(title__icontains=title) or
-                Q(author__icontains=author) or
-                Q(language__icontains=language) or
-                Q(pub_date__range=(d1, d2))
-            )
-            context = {'books_data': books_data}
-            print("post - context \n {}".format(context))
+            if title is not None:
+                books_data = Book.objects.filter(Q(title__icontains=title))
+                context = {'books_data': books_data}
+                return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+            if author is not None:
+                books_data = Book.objects.filter(Q(author__icontains=author))
+                context = {'books_data': books_data}
+                return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+            if language is not None:
+                books_data = Book.objects.filter(Q(language__icontains=language))
+                context = {'books_data': books_data}
+                return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+            if d1 is not None or d2 is not None:
+                books_data = Book.objects.filter(Q(pub_date__range=(d1, d2)))
+                context = {'books_data': books_data}
+                return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+
         except ValidationError as err:
             messages.error(request, "Wyszukiwanie książek - validationError: {}".format(err))
             print('Validation error w listowaniu wyników {}'.format(err.message))
             return redirect('aplikacjaKsiazkowa2:lista')
         else:
-            return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
+            return render(self.request, 'aplikacjaKsiazkowa2/lista.html')
 
 
 class GugleApiView(generic.View):
