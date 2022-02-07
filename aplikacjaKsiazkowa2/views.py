@@ -143,21 +143,21 @@ class ListBookView(generic.ListView):
         return context
 
     def post(self, request):
-        q = request.POST.get('q') if request.POST.get('q') is not None else ''
-        q2 = request.POST.get('q2') if request.POST.get('q2') is not None else ''
-        p = request.POST.get('p') if request.POST.get('p') is not None else ''
+        title = request.POST.get('title') if request.POST.get('title') is not None else ''
+        author = request.POST.get('author') if request.POST.get('author') is not None else ''
+        language = request.POST.get('language') if request.POST.get('language') is not None else ''
         d1 = request.POST.get('d1') if request.POST.get('d1') is not None else ''
         d2 = request.POST.get('d2') if request.POST.get('d2') is not None else ''
 
         try:
             books_data = Book.objects.filter(
-                Q(title__icontains=q) or
-                Q(author__icontains=q2) or
-                Q(language__icontains=p) or
+                Q(title__icontains=title) or
+                Q(author__icontains=author) or
+                Q(language__icontains=language) or
                 Q(pub_date__range=(d1, d2))
             )
             context = {'books_data': books_data}
-            # print("post - context \n {}".format(context))
+            print("post - context \n {}".format(context))
         except ValidationError as err:
             messages.error(request, "Wyszukiwanie książek - validationError: {}".format(err))
             print('Validation error w listowaniu wyników {}'.format(err.message))

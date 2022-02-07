@@ -142,14 +142,58 @@ class ListViewChoosingDataTests(TestCase):
         self.assertQuerysetEqual(response.context['books_data'], result)
         self.assertEqual(result_count, response_count)
 
-    def test_list_post_with_both_date(self):
-        pass
+    def test_list_post_with_empty_language(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        our_lang = 'eng'
+        choosen = {'language': our_lang, 'title': '', 'author': '', 'd1': '', 'd2': ''}
+        response = self.client.post(url, choosen)
 
-    def test_list_post_with_one_date(self):
-        pass
+        self.assertEqual(response.status_code, 200)
+
+        result = Book.objects.filter(language__icontains=our_lang)
+        result_count = result.count()
+        response_count = response.context['books_data'].count()
+
+        self.assertQuerysetEqual(response.context['books_data'], result)
+        self.assertEqual(result_count, response_count)
+
+    def test_list_post_with_both_date(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        choosen = {'d1': '2001-01-01', 'd2': '2022-01-01'}
+        response = self.client.post(url, choosen)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_list_post_with_first_date(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        choosen = {'d1': '2001-01-01'}
+        response = self.client.post(url, choosen)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_list_post_with_second_date(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        choosen = {'d2': '2022-01-01'}
+        response = self.client.post(url, choosen)
+
+        self.assertEqual(response.status_code, 200)
 
     def test_list_post_with_author(self):
-        pass
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        choosen = {'q2': 'Brzechwa'}
+        response = self.client.post(url, choosen)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, "Brzechwa")
+        self.assertContains(response, "Tolkien")
+
+        result = Book.objects.filter(author__icontains='Brzechwa')
+        result_count = result.count()
+        response_count = response.context['books_data'].count()
+
+        self.assertQuerysetEqual(response.context['books_data'], result)
+        self.assertEqual(result_count, response_count)
 
 
 class BookCreateViewTests(TestCase):
