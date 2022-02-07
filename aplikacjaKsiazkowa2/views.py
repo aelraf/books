@@ -173,7 +173,9 @@ class ListBookView(generic.ListView):
             return redirect('aplikacjaKsiazkowa2:lista')
         else:
             messages.warning(request, 'Podałeś nieprawidłowe kryteria wyszukiwania!')
-            return render(self.request, 'aplikacjaKsiazkowa2/lista.html')
+            books_data = Book.objects.all()
+            context = {'books_data': books_data}
+            return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
 
 
 class GugleApiView(generic.View):

@@ -176,10 +176,44 @@ class ListViewChoosingDataTests(TestCase):
 
     def test_list_post_with_both_date(self):
         url = reverse('aplikacjaKsiazkowa2:lista')
-        choosen = {'d1': '2001-01-01', 'd2': '2022-01-01'}
+        d1 = '2001-01-01'
+        d2 = '2022-01-01'
+        choosen = {'d1': d1, 'd2': d2}
         response = self.client.post(url, choosen)
 
         self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, "Brzechwa")
+        self.assertContains(response, "Tolkien")
+        self.assertContains(response, "Przechrzta")
+
+        result = Book.objects.filter(pub_date__range=(d1, d2))
+        result_count = result.count()
+        response_count = response.context['books_data'].count()
+
+        self.assertQuerysetEqual(response.context['books_data'], result)
+        self.assertEqual(result_count, response_count)
+
+    def test_list_post_with_empty_date_period(self):
+        url = reverse('aplikacjaKsiazkowa2:lista')
+        d1 = '1923-01-01'
+        d2 = '1924-01-01'
+        choosen = {'d1': d1, 'd2': d2}
+        response = self.client.post(url, choosen)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertNotContains(response, "Brzechwa")
+        self.assertNotContains(response, "Tolkien")
+        self.assertNotContains(response, "Przechrzta")
+
+        result = Book.objects.filter(pub_date__range=(d1, d2))
+        result_count = result.count()
+        response_count = response.context['books_data'].count()
+
+        self.assertQuerysetEqual(response.context['books_data'], result)
+        self.assertQuerysetEqual(response.context['books_data'], [])
+        self.assertEqual(result_count, response_count)
 
     def test_list_post_with_first_date(self):
         url = reverse('aplikacjaKsiazkowa2:lista')
@@ -188,12 +222,22 @@ class ListViewChoosingDataTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+        result = Book.objects.all()
+
+        self.assertContains(response, "Brzechwa")
+        self.assertQuerysetEqual(response.context['books_data'], result)
+
     def test_list_post_with_second_date(self):
         url = reverse('aplikacjaKsiazkowa2:lista')
         choosen = {'d2': '2022-01-01'}
         response = self.client.post(url, choosen)
 
         self.assertEqual(response.status_code, 200)
+
+        result = Book.objects.all()
+
+        self.assertContains(response, "Brzechwa")
+        self.assertQuerysetEqual(response.context['books_data'], result)
 
 
 class BookCreateViewTests(TestCase):
