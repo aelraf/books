@@ -45,18 +45,18 @@ class BookCreateView(CreateView):
             )
             if created is False:
                 messages.error(request, "Błąd dodawania książki")
-                print('blad dodawania ksiazki: created: {}, book: {}'.format(created, new_book))
+                # print('blad dodawania ksiazki: created: {}, book: {}'.format(created, new_book))
                 return render(request, 'aplikacjaKsiazkowa2/add_book.html')
             else:
                 messages.success(request, "Dodano książkę: {}".format(new_book))
-                print('dodajemy ksiazke: {} \n'.format(new_book))
+                # print('dodajemy ksiazke: {} \n'.format(new_book))
         except ValidationError as err:
             messages.error(request, "Błąd dodawania książki: {}".format(err.message))
-            print('Validation Error podczas dodawania ksiazki: {}, {}'.format(err.message, err.params))
+            # print('Validation Error podczas dodawania ksiazki: {}, {}'.format(err.message, err.params))
             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
         except IntegrityError as err:
             messages.error(request, "Błąd dodawania książki: {}".format(err))
-            print('IntegrityErr podczas dodawania ksiazki: {}'.format(err))
+            # print('IntegrityErr podczas dodawania ksiazki: {}'.format(err))
             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
         else:
             return redirect('aplikacjaKsiazkowa2:lista')
@@ -149,38 +149,20 @@ class ListBookView(generic.ListView):
         d1 = request.POST.get('d1') if request.POST.get('d1') is not None else ''
         d2 = request.POST.get('d2') if request.POST.get('d2') is not None else ''
 
-        """if title is not None:
-            try:
-                books_data = Book.objects.filter(
-                    Q(title__icontains=title) and
-                    Q(author__icontains=author) and
-                    Q(language__icontains=language) or
-                    Q(pub_date__range=(d1, d2))
-                )
-                
-                context = {'books_data': books_data}
-                # print("post - context \n {}".format(context))
-            except ValidationError as err:
-                messages.error(request, "Wyszukiwanie książek - validationError: {}".format(err))
-                print('Validation error w listowaniu wyników {}'.format(err.message))
-                return redirect('aplikacjaKsiazkowa2:lista')
-            else:
-                return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)"""
-
         try:
-            if title is not None:
+            if title != "":
                 books_data = Book.objects.filter(Q(title__icontains=title))
                 context = {'books_data': books_data}
                 return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
-            if author is not None:
+            if author != "":
                 books_data = Book.objects.filter(Q(author__icontains=author))
                 context = {'books_data': books_data}
                 return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
-            if language is not None:
+            if language != "":
                 books_data = Book.objects.filter(Q(language__icontains=language))
                 context = {'books_data': books_data}
                 return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
-            if d1 is not None or d2 is not None:
+            if d1 != "" and d2 != "":
                 books_data = Book.objects.filter(Q(pub_date__range=(d1, d2)))
                 context = {'books_data': books_data}
                 return render(self.request, 'aplikacjaKsiazkowa2/lista.html', context)
@@ -190,6 +172,7 @@ class ListBookView(generic.ListView):
             print('Validation error w listowaniu wyników {}'.format(err.message))
             return redirect('aplikacjaKsiazkowa2:lista')
         else:
+            messages.warning(request, 'Podałeś nieprawidłowe kryteria wyszukiwania!')
             return render(self.request, 'aplikacjaKsiazkowa2/lista.html')
 
 
