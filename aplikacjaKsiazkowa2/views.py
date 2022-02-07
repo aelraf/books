@@ -31,24 +31,28 @@ class BookCreateView(CreateView):
     context_object_name = 'books_data'
 
     def post(self, request, *args, **kwargs):
-        title = request.POST.get('title')
+        title = request.POST.get('title') if 'title' in request.POST else ""
+
         try:
             new_book, created = Book.objects.get_or_create(
                 title=title,
-                author=request.POST.get('author'),
-                pub_date=request.POST.get('pub_date'),
-                isbn=request.POST.get('isbn'),
-                pages=request.POST.get('pages'),
-                cover=request.POST.get('cover'),
-                language=request.POST.get('language')
+                author=request.POST.get('author') if 'author' in request.POST else "",
+                pub_date=request.POST.get('pub_date') if 'pub_date' in request.POST else "",
+                isbn=request.POST.get('isbn') if 'isbn' in request.POST else "",
+                pages=request.POST.get('pages') if 'pages' in request.POST else None,
+                cover=request.POST.get('cover') if 'cover' in request.POST else "",
+                language=request.POST.get('language') if 'language' in request.POST else ""
             )
+            print('dodajemy ksiazke: {} \n'.format(new_book))
             if created is False:
                 messages.error(request, "Błąd dodawania książki")
+                print('blad dodawania ksiazki: created: {}, book: {}'.format(created, new_book))
                 return render(request, 'aplikacjaKsiazkowa2/add_book.html')
             else:
                 messages.success(request, "Dodano książkę: {}".format(new_book))
-        except ValidationError:
-            messages.error(request, "Błąd dodawania książki: {}".format(ValidationError))
+        except ValidationError as err:
+            messages.error(request, "Błąd dodawania książki: {}".format(err))
+            print('Validation Error podczas dodawania ksiazki: {}'.format(ValidationError))
             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
         else:
             return redirect('aplikacjaKsiazkowa2:lista')
@@ -79,8 +83,8 @@ class BookUpdateView(UpdateView):
         pk = kwargs['pk']
         try:
             book = Book.objects.get(pk=pk)
-        except KeyError:
-            messages.error(request, "Błąd aktualizacji ksiażki - KeyError!")
+        except KeyError as err:
+            messages.error(request, "Błąd aktualizacji ksiażki - KeyError! {}".format(err))
             return redirect('aplikacjaKsiazkowa2:lista')
         except:
             messages.error(request, "Błąd aktualizacji ksiażki - książki o takim id nie ma w bazie!")
@@ -109,15 +113,15 @@ class BookUpdateView(UpdateView):
                 book.cover = request.POST.get('cover')
             if 'language' in request.POST:
                 book.language = request.POST.get('language')
-        except ValidationError:
-            messages.error(request, "Błąd aktualizacji ksiażki - podaj poprawne dane! {}".format(ValidationError))
+        except ValidationError as err:
+            messages.error(request, "Błąd aktualizacji ksiażki - podaj poprawne dane! {}".format(err))
             return redirect('aplikacjaKsiazkowa2:edit_book')
         else:
             try:
                 book.save()
                 messages.success(request, "Zaktualizowano książkę: {}".format(book))
-            except IntegrityError:
-                messages.error(request, "Błąd aktualizacji ksiażki - IntegrityError")
+            except IntegrityError as err:
+                messages.error(request, "Błąd aktualizacji ksiażki - IntegrityError {}".format(err))
                 return redirect('aplikacjaKsiazkowa2:edit_book')
             else:
                 return redirect('aplikacjaKsiazkowa2:lista')
@@ -150,8 +154,8 @@ class ListBookView(generic.ListView):
             )
             context = {'books_data': books_data}
             print("post - context \n {}".format(context))
-        except ValidationError:
-            messages.error(request, "Wyszukiwanie książek - validationError: {}".format(ValidationError))
+        except ValidationError as err:
+            messages.error(request, "Wyszukiwanie książek - validationError: {}".format(err))
             print('Validation error w listowaniu wyników')
             return redirect('aplikacjaKsiazkowa2:lista')
         else:
@@ -202,7 +206,7 @@ class GugleApiView(generic.View):
                         else:
                             pub_date = None
 
-                        isbn = None
+                        isbn = ''
                         if volume.get('industryIdentifiers') is not None:
                             helper = volume['industryIdentifiers']
                             for i in range(len(helper)):
@@ -229,8 +233,11 @@ class GugleApiView(generic.View):
                 else:
                     messages.error(request, "błąd zapytania do gugli: ".format(response.status_code))
                     return redirect('aplikacjaKsiazkowa2:gugle')
-            except IntegrityError:
-                messages.error(request, "Błąd korzystania z gugleAPI - spróbuj ponownie")
+            except IntegrityError as err:
+                messages.error(request, "Błąd korzystania z gugleAPI - spróbuj ponownie: {}".format(err) )
+                return redirect('aplikacjaKsiazkowa2:gugle')
+            except ValidationError as err:
+                messages.error(request, "Błąd korzystania z gugleAPI - spróbuj ponownie: {}".format(err))
                 return redirect('aplikacjaKsiazkowa2:gugle')
             else:
                 print('\n')

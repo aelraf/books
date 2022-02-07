@@ -124,6 +124,9 @@ class ListViewChoosingDataTests(TestCase):
 
         self.assertQuerysetEqual(response.context['books_data'], [hobbit])
 
+    def test_list_post_with_language(self):
+        pass
+
 
 class BookCreateViewTests(TestCase):
     def test_add_book_response(self):
@@ -147,7 +150,7 @@ class BookCreateViewTests(TestCase):
 
     def test_add_book_with_count_response(self):
         book = {
-            'title': 'Siedem lat chudych',
+            'title': 'Siedem lat tłustych',
             'author': "Marian Hemar",
             'pub_date': '2015-01-01',
             'isbn': '9788375654332',
@@ -177,6 +180,19 @@ class BookCreateViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # self.assertRaises(ValidationError, BookCreateView.post, kwargs=book)
+
+    def test_add_book_without_completly_only_not_null_data(self):
+        book = {
+            'title': 12345,
+            'author': "Mikołaj Gogol Jan Kowalski Edward Nowak",
+            'pub_date': '01-12-3456',
+        }
+
+        response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
+        self.assertEqual(response.status_code, 200)
+
+        books_count = Book.objects.all().count()
+        self.assertEqual(2, books_count)
 
 
 class BookDeleteViewTest(TestCase):
