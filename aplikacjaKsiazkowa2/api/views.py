@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.core.exceptions import ValidationError
 from django.http import Http404
+from django.utils.dateparse import parse_date
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,7 +16,11 @@ def get_route(request):
     routes = [
         'GET /api',
         'GET /api/books',
-        'GET /api/books/:id'
+        'GET /api/books/:id',
+        'GET /api/books/?title=looking_title',
+        'GET /api/books/?author=looking_author',
+        'GET /api/books/?language=looking_language',
+        'GET /api/books/?d1=YYYY-MM-DD&d2=YYYY-MM-DD',
     ]
     return Response(routes)
 
@@ -32,6 +37,20 @@ def get_book(request, pk):
     book = Book.objects.get(id=pk)
     serializer = BookSerializer(book, many=False)
     return Response(serializer.data)
+
+
+class GetRoutesApi(APIView):
+    def get(self, request):
+        routes = [
+            'GET /api',
+            'GET /api/books',
+            'GET /api/books/:id',
+            'GET /api/books/?title=looking_title',
+            'GET /api/books/?author=looking_author',
+            'GET /api/books/?language=looking_language',
+            'GET /api/books/?d1=YYYY-MM-DD&d2=YYYY-MM-DD',
+        ]
+        return Response(routes)
 
 
 class BookDetailApi(APIView):
@@ -61,8 +80,8 @@ class BookListApi(APIView):
         author = request.GET['author'] if 'author' in request.GET else ""
         title = request.GET['title'] if 'title' in request.GET else ""
         language = request.GET['language'] if 'language' in request.GET else ""
-        d1 = request.GET['d1'] if 'd1' in request.GET else ""
-        d2 = request.GET['d2'] if 'd2' in request.GET else ""
+        d1 = parse_date(request.GET['d1']) if 'd1' in request.GET else ""
+        d2 = parse_date(request.GET['d2']) if 'd2' in request.GET else ""
 
         try:
             if title != "":
@@ -81,12 +100,15 @@ class BookListApi(APIView):
                 books = Book.objects.filter(pub_date__range=(d1, d2))
                 serializer = BookSerializer(books, many=True)
                 return Response(serializer.data)
+        except Book.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         except AttributeError as err:
             print("BookListApi - AttributeError")
             raise Http404
         except ValidationError as err:
             print("BookListApi - ValidationError")
-            raise Http404
+            # raise Http404
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         except KeyError as err:
             print("BookListApi - KeyError")
             raise Http404

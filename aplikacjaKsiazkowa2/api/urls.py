@@ -7,9 +7,10 @@ from . import views
 
 
 urlpatterns = [
-    path('api', views.get_route),
+    # path('api', views.get_route),
     # path('api/books', views.get_books),
     # path('api/books/<str:pk>', views.get_book),
+    path('api', views.GetRoutesApi.as_view()),
     path('api/books', views.BookListApi.as_view()),
     path('api/books/<str:pk>', views.BookDetailApi.as_view()),
 ]
