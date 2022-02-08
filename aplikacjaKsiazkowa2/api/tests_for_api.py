@@ -2,6 +2,7 @@
 import json
 
 from django.db.models import QuerySet
+from django.http import Http404
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIRequestFactory, RequestsClient, APIClient
@@ -42,3 +43,11 @@ class RESTApiTest(TestCase):
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 8)
+
+    def test_my_api_books_with_bad_pk(self):
+        client = APIClient()
+        response = client.get('http://127.0.0.1:8000/api/books/100')
+
+        self.assertEqual(response.status_code, 404)
+
+        self.assertRaises(Http404)
