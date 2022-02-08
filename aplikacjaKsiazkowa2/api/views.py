@@ -81,6 +81,9 @@ class BookListApi(APIView):
                 books = Book.objects.filter(pub_date__range=(d1, d2))
                 serializer = BookSerializer(books, many=True)
                 return Response(serializer.data)
+        except AttributeError as err:
+            print("BookListApi - AttributeError")
+            raise Http404
         except ValidationError as err:
             print("BookListApi - ValidationError")
             raise Http404

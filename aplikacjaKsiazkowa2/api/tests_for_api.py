@@ -26,6 +26,13 @@ class RESTApiTest(TestCase):
         data = json.loads(response.content)
         self.assertEqual(len(data), 3)
 
+
+class BookListApiTests(TestCase):
+    def setUp(self) -> None:
+        create_brzechwa()
+        create_tolkien()
+        create_przechrzta()
+
     def test_my_api_books(self):
         client = APIClient()
         response = client.get('http://127.0.0.1:8000/api/books')
@@ -34,6 +41,13 @@ class RESTApiTest(TestCase):
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 3)
+
+
+class BookDetailApiTests(TestCase):
+    def setUp(self) -> None:
+        create_brzechwa()
+        create_tolkien()
+        create_przechrzta()
 
     def test_my_api_books_with_pk(self):
         client = APIClient()
