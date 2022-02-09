@@ -27,30 +27,30 @@
                     <tbody>
                         {% for book in books_data %}
                             <tr class="align-middle">
-                                <th scope="row">{{ book.id }}</th>
-                                <th scope="row">{{ book.title }}</th>
-                                <th scope="row">{{ book.author }}</th>
-                                <th scope="row">{{ book.pub_date }}</th>
-                                <th scope="row">{{ book.isbn }}</th>
-                                <th scope="row">{{ book.pages }}</th>
-                                <th scope="row">{{ book.cover }}</th>
-                                <th scope="row">{{ book.language }}</th>
-                                <th scope="row">
+                                <td scope="row">{{ book.id }}</td>
+                                <td scope="row">{{ book.title }}</td>
+                                <td scope="row">{{ book.author }}</td>
+                                <td scope="row">{{ book.pub_date }}</td>
+                                <td scope="row">{{ book.isbn }}</td>
+                                <td scope="row">{{ book.pages }}</td>
+                                <td scope="row">{{ book.cover }}</td>
+                                <td scope="row">{{ book.language }}</td>
+                                <td scope="row">
                                     <form action="{% url 'aplikacjaKsiazkowa2:edit_book' pk=book.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-warning">
                                             Edytuj
                                         </button>
                                     </form>
-                                </th>
-                                <th scope="row">
+                                </td>
+                                <td scope="row">
                                     <form action="{% url 'aplikacjaKsiazkowa2:delete_book' book.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-danger">
                                             Usuń
                                         </button>
                                     </form>
-                                </th>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>

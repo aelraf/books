@@ -41,7 +41,7 @@ class BookListApiTests(TestCase):
 
     def test_book_list_api_with_good_title(self):
         client = RequestsClient()
-        response = client.get('http://127.0.0.1:8000/api/books/?title=brzechwa')
+        response = client.get('http://127.0.0.1:8000/api/books?title=brzechwa')
         result = response.json()
 
         self.assertEqual(response.status_code, 200)
