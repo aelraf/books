@@ -14,6 +14,7 @@ from pathlib import Path
 import django_heroku
 from environ import Env
 
+
 env = Env()
 env.read_env()
 
@@ -146,6 +147,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
