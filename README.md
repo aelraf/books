@@ -41,3 +41,6 @@ na którym jest dostępna aplikacja: https://demo-books20211013.herokuapp.com/
 Aplikację wykonaliśmy za pomocą frameworku Django, najpierw przy użyciu widoków funkcyjnych, a następnie Class-Based Views.
 
 
+<h1>To do</h1>
+- testy do API restowego
+- testy do obsługi API googlowego z mockowaniem odpowiedzi od gugli

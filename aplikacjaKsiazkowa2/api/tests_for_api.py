@@ -203,7 +203,7 @@ class BookDetailApiTests(TestCase):
         book = book_detail.get_object(pk=pk)
 
         assert book.author == "John Tolkien"
-        assert book.title
+        assert "Hobbit" in book.title
 
     def test_get_object_with_bad_pk(self):
         pk = 123
