@@ -91,6 +91,48 @@ class BookListApiTests(TestCase):
 
         self.assertEqual(result, [])
 
+    def test_book_list_with_good_language(self):
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/api/books?language=pl')
+        result = response.json()
+
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 3)
+
+        books = Book.objects.filter(language__icontains='pl')
+        self.assertEqual(result[0]['language'], books[0].language)
+
+    def test_book_list_with_non_existing_language(self):
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/api/books?language=eng')
+        result = response.json()
+
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 0)
+
+    def test_book_list_with_bad_language(self):
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/api/books?language=12qwerty345')
+        result = response.json()
+
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 0)
+
+    def test_book_list_with_two_good_dates(self):
+        pass
+
+    def test_book_list_with_one_date(self):
+        pass
+
+    def test_book_list_with_bad_date(self):
+        pass
+
 
 class BookDetailApiTests(TestCase):
     def setUp(self) -> None:
@@ -125,6 +167,7 @@ class BookDetailApiTests(TestCase):
         book = book_detail.get_object(pk=pk)
 
         assert book.author == "John Tolkien"
+        assert book.title
 
     def test_get_object_with_bad_pk(self):
         pk = 123
