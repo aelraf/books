@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
 
+from django.http import Http404
 from django.test import TestCase
 from rest_framework.test import APIClient, RequestsClient
 
+from aplikacjaKsiazkowa2.api.views import BookDetailApi
 from aplikacjaKsiazkowa2.models import Book
 from aplikacjaKsiazkowa2.tests_for_views import create_brzechwa, create_przechrzta, create_tolkien
 
@@ -96,7 +98,7 @@ class BookDetailApiTests(TestCase):
         create_tolkien()
         create_przechrzta()
 
-    def test_my_api_books_with_pk(self):
+    def test_get_with_pk(self):
         client = APIClient()
         response = client.get('http://127.0.0.1:8000/api/books/1')
 
@@ -105,14 +107,27 @@ class BookDetailApiTests(TestCase):
         data = json.loads(response.content)
         self.assertEqual(len(data), 8)
 
-    def test_my_api_books_with_bad_pk(self):
+    def test_get_with_bad_pk(self):
         client = APIClient()
         with self.assertRaises(ValueError):
             response = client.get('http://127.0.0.1:8000/api/books/qwerty')
             self.assertEqual(response.status_code, 200)
 
-    def test_my_api_books_with_to_big_pk(self):
+    def test_get_with_to_big_pk(self):
         client = APIClient()
 
         response = client.get('http://127.0.0.1:8000/api/books/100')
         self.assertEqual(response.status_code, 404)
+
+    def test_get_object_with_good_pk(self):
+        pk = 2
+        book_detail = BookDetailApi()
+        book = book_detail.get_object(pk=pk)
+
+        assert book.author == "John Tolkien"
+
+    def test_get_object_with_bad_pk(self):
+        pk = 123
+        book_detail = BookDetailApi()
+
+        self.assertRaises(Http404, book_detail.get_object, pk=pk)

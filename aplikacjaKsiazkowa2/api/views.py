@@ -10,7 +10,7 @@ from rest_framework import status
 from aplikacjaKsiazkowa2.models import Book
 from .serializers import BookSerializer
 
-
+"""
 @api_view(['GET'])
 def get_route(request):
     routes = [
@@ -36,7 +36,7 @@ def get_books(request):
 def get_book(request, pk):
     book = Book.objects.get(id=pk)
     serializer = BookSerializer(book, many=False)
-    return Response(serializer.data)
+    return Response(serializer.data)"""
 
 
 class GetRoutesApi(APIView):
