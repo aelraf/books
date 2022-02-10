@@ -10,34 +10,6 @@ from rest_framework import status
 from aplikacjaKsiazkowa2.models import Book
 from .serializers import BookSerializer
 
-"""
-@api_view(['GET'])
-def get_route(request):
-    routes = [
-        'GET /api',
-        'GET /api/books',
-        'GET /api/books/:id',
-        'GET /api/books/?title=looking_title',
-        'GET /api/books/?author=looking_author',
-        'GET /api/books/?language=looking_language',
-        'GET /api/books/?d1=YYYY-MM-DD&d2=YYYY-MM-DD',
-    ]
-    return Response(routes)
-
-
-@api_view(['GET'])
-def get_books(request):
-    books = Book.objects.all()
-    serializer = BookSerializer(books, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_book(request, pk):
-    book = Book.objects.get(id=pk)
-    serializer = BookSerializer(book, many=False)
-    return Response(serializer.data)"""
-
 
 class GetRoutesApi(APIView):
     def get(self, request):
