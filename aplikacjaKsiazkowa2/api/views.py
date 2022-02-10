@@ -45,10 +45,10 @@ class GetRoutesApi(APIView):
             'GET /api',
             'GET /api/books',
             'GET /api/books/:id',
-            'GET /api/books/?title=looking_title',
-            'GET /api/books/?author=looking_author',
-            'GET /api/books/?language=looking_language',
-            'GET /api/books/?d1=YYYY-MM-DD&d2=YYYY-MM-DD',
+            'GET /api/books?title=looking_title',
+            'GET /api/books?author=looking_author',
+            'GET /api/books?language=looking_language',
+            'GET /api/books?d1=YYYY-MM-DD&d2=YYYY-MM-DD',
         ]
         return Response(routes)
 
