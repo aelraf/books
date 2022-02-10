@@ -20,7 +20,7 @@ class IndexView(generic.ListView):
     context_object_name = 'books_data'
 
 
-class OurApiView(generic.View):
+class OurApiView(generic.ListView):
     template_name = "aplikacjaKsiazkowa2/naszeApi.html"
     queryset = Book.objects.all()
     context_object_name = 'books_data'
