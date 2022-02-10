@@ -46,6 +46,20 @@ class BookListApiTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 1)
+
+    def test_book_list_api_with_bad_title(self):
+        client = RequestsClient()
+        response = client.get('http://127.0.0.1:8000/api/books?title=1234')
+        result = response.json()
+
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 0)
+
+
 
 class BookDetailApiTests(TestCase):
     def setUp(self) -> None:
