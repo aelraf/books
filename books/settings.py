@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
-    
+
     'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',

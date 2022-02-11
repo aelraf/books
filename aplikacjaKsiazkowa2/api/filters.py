@@ -5,6 +5,8 @@ from aplikacjaKsiazkowa2.models import Book
 class BookFilter(django_filters.FilterSet):
 
     author = django_filters.CharFilter(lookup_expr='icontains')
+    title = django_filters.CharFilter(lookup_expr='icontains')
+    language = django_filters.CharFilter(lookup_expr='icontains')
     pub_date = django_filters.DateFromToRangeFilter()
 
     class Meta:
