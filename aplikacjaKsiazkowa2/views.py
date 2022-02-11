@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.urls import reverse, reverse_lazy
 
 from django.views import generic
 from django.views.generic import UpdateView, CreateView, DeleteView
@@ -13,17 +14,13 @@ from aplikacjaKsiazkowa2.models import Book
 from .forms import BookForm
 
 
-class IndexView(generic.ListView):
+class IndexView(generic.TemplateView):
     """ widok ogólny w zamian za widok index(request) """
     template_name = 'aplikacjaKsiazkowa2/index.html'
-    queryset = Book.objects.all()
-    context_object_name = 'books_data'
 
 
-class OurApiView(generic.ListView):
+class OurApiView(generic.TemplateView):
     template_name = "aplikacjaKsiazkowa2/naszeApi.html"
-    queryset = Book.objects.all()
-    context_object_name = 'books_data'
 
 
 class BookCreateView(CreateView):
@@ -32,37 +29,38 @@ class BookCreateView(CreateView):
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/add_book.html'
     context_object_name = 'books_data'
+    success_url = reverse_lazy('aplikacjaKsiazkowa2:lista')
 
-    def post(self, request, *args, **kwargs):
-        title = request.POST.get('title') if 'title' in request.POST else ""
-
-        try:
-            new_book, created = Book.objects.get_or_create(
-                title=title,
-                author=request.POST.get('author') if 'author' in request.POST else "",
-                pub_date=request.POST.get('pub_date') if 'pub_date' in request.POST else "",
-                isbn=request.POST.get('isbn') if 'isbn' in request.POST else "",
-                pages=request.POST.get('pages') if 'pages' in request.POST else None,
-                cover=request.POST.get('cover') if 'cover' in request.POST else "",
-                language=request.POST.get('language') if 'language' in request.POST else ""
-            )
-            if created is False:
-                messages.error(request, "Błąd dodawania książki")
-                # print('blad dodawania ksiazki: created: {}, book: {}'.format(created, new_book))
-                return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-            else:
-                messages.success(request, "Dodano książkę: {}".format(new_book))
-                # print('dodajemy ksiazke: {} \n'.format(new_book))
-        except ValidationError as err:
-            messages.error(request, "Błąd dodawania książki: {}".format(err.message))
-            # print('Validation Error podczas dodawania ksiazki: {}, {}'.format(err.message, err.params))
-            return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-        except IntegrityError as err:
-            messages.error(request, "Błąd dodawania książki: {}".format(err))
-            # print('IntegrityErr podczas dodawania ksiazki: {}'.format(err))
-            return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-        else:
-            return redirect('aplikacjaKsiazkowa2:lista')
+    # def post(self, request, *args, **kwargs):
+    #     title = request.POST.get('title') if 'title' in request.POST else ""
+    #
+    #     try:
+    #         new_book, created = Book.objects.get_or_create(
+    #             title=title,
+    #             author=request.POST.get('author') if 'author' in request.POST else "",
+    #             pub_date=request.POST.get('pub_date') if 'pub_date' in request.POST else "",
+    #             isbn=request.POST.get('isbn') if 'isbn' in request.POST else "",
+    #             pages=request.POST.get('pages') if 'pages' in request.POST else None,
+    #             cover=request.POST.get('cover') if 'cover' in request.POST else "",
+    #             language=request.POST.get('language') if 'language' in request.POST else ""
+    #         )
+    #         if created is False:
+    #             messages.error(request, "Błąd dodawania książki")
+    #             # print('blad dodawania ksiazki: created: {}, book: {}'.format(created, new_book))
+    #             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+    #         else:
+    #             messages.success(request, "Dodano książkę: {}".format(new_book))
+    #             # print('dodajemy ksiazke: {} \n'.format(new_book))
+    #     except ValidationError as err:
+    #         messages.error(request, "Błąd dodawania książki: {}".format(err.message))
+    #         # print('Validation Error podczas dodawania ksiazki: {}, {}'.format(err.message, err.params))
+    #         return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+    #     except IntegrityError as err:
+    #         messages.error(request, "Błąd dodawania książki: {}".format(err))
+    #         # print('IntegrityErr podczas dodawania ksiazki: {}'.format(err))
+    #         return render(request, 'aplikacjaKsiazkowa2/add_book.html')
+    #     else:
+    #         return redirect('aplikacjaKsiazkowa2:lista')
 
 
 class BookDeleteView(DeleteView):
@@ -140,17 +138,16 @@ class ListBookView(generic.ListView):
     template_name = 'aplikacjaKsiazkowa2/lista.html'
     queryset = Book.objects.all()
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['books_data'] = Book.objects.all()
-        return context
-
     def post(self, request):
-        title = request.POST.get('title') if request.POST.get('title') is not None else ''
-        author = request.POST.get('author') if request.POST.get('author') is not None else ''
-        language = request.POST.get('language') if request.POST.get('language') is not None else ''
-        d1 = request.POST.get('d1') if request.POST.get('d1') is not None else ''
-        d2 = request.POST.get('d2') if request.POST.get('d2') is not None else ''
+        title = request.POST.get('title', '')
+        author = request.POST.get('author', '')
+        language = request.POST.get('language', '')
+        d1 = request.POST.get('d1', '')
+        d2 = request.POST.get('d2', '')
+
+        for field, method in (("title", "icontains"), ("author", "icontains")):
+            books_data = Book.objects.filter(**{f"{field}__{method}": request.POST.get(field, "")})
+            # + django filters
 
         try:
             if title != "":
@@ -211,6 +208,13 @@ class GugleApiView(generic.View):
                 response = requests.get(url_looking)
                 if response.status_code == 200:
                     books_data = response.json()
+
+                    from aplikacjaKsiazkowa2.api.serializers import GugleSerializer
+                    serializer = GugleSerializer(data=books_data["items"], many=True)
+                    serializer.is_valid(raise_exception=True)
+                    print("PRINT CONTROLNY")
+                    print(serializer.validated_data)
+
                     for book in books_data['items']:
                         volume = book['volumeInfo']
                         title = volume['title']
