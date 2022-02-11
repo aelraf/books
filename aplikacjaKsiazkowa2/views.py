@@ -9,6 +9,7 @@ from django.urls import reverse, reverse_lazy
 
 from django.views import generic
 from django.views.generic import UpdateView, CreateView, DeleteView
+from rest_framework import status
 
 from aplikacjaKsiazkowa2.models import Book
 from .forms import BookForm
@@ -145,6 +146,7 @@ class ListBookView(generic.ListView):
         d1 = request.POST.get('d1', '')
         d2 = request.POST.get('d2', '')
 
+        # dopracować poniższy pomysł
         for field, method in (("title", "icontains"), ("author", "icontains")):
             books_data = Book.objects.filter(**{f"{field}__{method}": request.POST.get(field, "")})
             # + django filters
@@ -206,14 +208,8 @@ class GugleApiView(generic.View):
 
             try:
                 response = requests.get(url_looking)
-                if response.status_code == 200:
+                if response.status_code == status.HTTP_200_OK:
                     books_data = response.json()
-
-                    from aplikacjaKsiazkowa2.api.serializers import GugleSerializer
-                    serializer = GugleSerializer(data=books_data["items"], many=True)
-                    serializer.is_valid(raise_exception=True)
-                    print("PRINT CONTROLNY")
-                    print(serializer.validated_data)
 
                     for book in books_data['items']:
                         volume = book['volumeInfo']
