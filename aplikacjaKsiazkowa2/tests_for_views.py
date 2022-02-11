@@ -4,6 +4,8 @@
 # i to: https://medium.com/kami-people/mocking-for-good-mocking-with-python-and-django-4d05cfda4fa3
 # i https://yeraydiazdiaz.medium.com/what-the-mock-cheatsheet-mocking-in-python-6a71db997832
 
+import responses
+from rest_framework import status
 from django.db.models import QuerySet
 from django.test import TestCase
 from django.urls import reverse
@@ -462,13 +464,97 @@ class GugleApiViewTests(TestCase):
 
 
 class GugleApiViewTestOnlyWithRealUsingGugleApi(TestCase):
+    @responses.activate
+    def test_gugle_api_with_mocking(self):
+        book_from_api = 'Hobbit'
+        responses.add(
+            responses.GET,
+            f"https://www.googleapis.com/books/v1/volumes?q={book_from_api}",
+            json={
+                "kind":"books#volumes",
+                "totalItems":729,
+                "items":[
+                    {
+                        "kind":"books#volume",
+                        "id":"rToaogEACAAJ",
+                        "etag":"tsp8lpI0qSo",
+                        "selfLink":"https://www.googleapis.com/books/v1/volumes/rToaogEACAAJ",
+                        "volumeInfo":{
+                            "title":"Hobbit czyli tam i z powrotem",
+                            "authors":[
+                                "J. R. R. Tolkien"
+                            ],
+                            "publishedDate":"2015-01",
+                            "industryIdentifiers":[
+                                {
+                                    "type":"ISBN_10",
+                                    "identifier":"8324403876"
+                                },
+                                {
+                                    "type":"ISBN_13",
+                                    "identifier":"9788324403875"
+                                }
+                            ],
+                            "readingModes":{
+                                "text":False,
+                                "image":False
+                            },
+                            "pageCount":320,
+                            "printType":"BOOK",
+                            "averageRating":5,
+                            "ratingsCount":1,
+                            "maturityRating":"NOT_MATURE",
+                            "allowAnonLogging":False,
+                            "contentVersion":"preview-1.0.0",
+                            "language":"pl",
+                            "previewLink":"http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&cd=1&source=gbs_api",
+                            "infoLink":"http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&source=gbs_api",
+                            "canonicalVolumeLink":"https://books.google.com/books/about/Hobbit_czyli_tam_i_z_powrotem.html?hl=&id=rToaogEACAAJ"
+                        },
+                        "saleInfo":{
+                            "country":"PL",
+                            "saleability":"NOT_FOR_SALE",
+                            "isEbook":False
+                        },
+                        "accessInfo":{
+                            "country":"PL",
+                            "viewability":"NO_PAGES",
+                            "embeddable":False,
+                            "publicDomain":False,
+                            "textToSpeechPermission":"ALLOWED",
+                            "epub":{
+                                "isAvailable":False
+                            },
+                            "pdf":{
+                                "isAvailable":False
+                            },
+                            "webReaderLink":"http://play.google.com/books/reader?id=rToaogEACAAJ&hl=&printsec=frontcover&source=gbs_api",
+                            "accessViewStatus":"NONE",
+                            "quoteSharingAllowed":False
+                        }
+                    }
+                ]
+            },
+            status=status.HTTP_200_OK
+        )
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        context = {'book_from_api': book_from_api}
+        response = self.client.post(url, context)
+
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+
+        books = Book.objects.all()
+        books_count = books.count()
+
+        self.assertEqual(books_count, 1)
+
     def test_gugle_api_with_only_test_with_real_google(self):
         book_from_api = 'Hobbit'
         url = reverse('aplikacjaKsiazkowa2:gugle')
         context = {'book_from_api': book_from_api}
         response = self.client.post(url, context)
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
         books = Book.objects.all()
         books_count = books.count()
