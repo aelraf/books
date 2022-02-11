@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# mockowanie: https://www.20tab.com/en/blog/test-python-mocking/
-# i to: https://medium.com/kami-people/mocking-for-good-mocking-with-python-and-django-4d05cfda4fa3
-# i https://yeraydiazdiaz.medium.com/what-the-mock-cheatsheet-mocking-in-python-6a71db997832
-
 import responses
 from rest_framework import status
 from django.db.models import QuerySet
@@ -52,13 +48,13 @@ def create_przechrzta():
 class IndexViewTests(TestCase):
     def test_index_response(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:index'))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class EmptyListViewTests(TestCase):
     def test_list_response(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertQuerysetEqual(response.context['books_data'], [])
 
 
@@ -84,9 +80,12 @@ class ListViewTests(TestCase):
 
         hobbit = Book.objects.get(id='2')
         self.assertEqual(response.context['books_data'][1], hobbit)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_list_without_the_book(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:lista'))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         new_book = Book.objects.create(
             title="Wilczy pagon",
@@ -110,14 +109,14 @@ class ListViewChoosingDataTests(TestCase):
         url = reverse('aplikacjaKsiazkowa2:lista')
         response = self.client.post(url)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_list_post_with_title(self):
         url = reverse('aplikacjaKsiazkowa2:lista')
         choosen = {'title': 'Hobbit'}
         response = self.client.post(url, choosen)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, "Hobbit")
         self.assertNotContains(response, "Brzechwa")
         self.assertNotContains(response, "Hemar")
@@ -131,7 +130,7 @@ class ListViewChoosingDataTests(TestCase):
         choosen = {'language': 'pl'}
         response = self.client.post(url, choosen)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, "Hobbit")
         self.assertContains(response, "Brzechwa")
         self.assertContains(response, "Przechrzta")
@@ -150,7 +149,7 @@ class ListViewChoosingDataTests(TestCase):
         choosen = {'language': our_lang}
         response = self.client.post(url, choosen)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         result = Book.objects.filter(language__icontains=our_lang)
         result_count = result.count()
@@ -164,7 +163,7 @@ class ListViewChoosingDataTests(TestCase):
         choosen = {'author': 'Brzechwa'}
         response = self.client.post(url, choosen)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertContains(response, "Brzechwa")
         self.assertNotContains(response, "Tolkien")
@@ -183,7 +182,7 @@ class ListViewChoosingDataTests(TestCase):
         choosen = {'d1': d1, 'd2': d2}
         response = self.client.post(url, choosen)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertContains(response, "Brzechwa")
         self.assertContains(response, "Tolkien")
@@ -203,7 +202,7 @@ class ListViewChoosingDataTests(TestCase):
         choosen = {'d1': d1, 'd2': d2}
         response = self.client.post(url, choosen)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertNotContains(response, "Brzechwa")
         self.assertNotContains(response, "Tolkien")
@@ -222,7 +221,7 @@ class ListViewChoosingDataTests(TestCase):
         choosen = {'d1': '2001-01-01'}
         response = self.client.post(url, choosen)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         result = Book.objects.all()
 
@@ -234,7 +233,7 @@ class ListViewChoosingDataTests(TestCase):
         choosen = {'d2': '2022-01-01'}
         response = self.client.post(url, choosen)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         result = Book.objects.all()
 
@@ -245,7 +244,7 @@ class ListViewChoosingDataTests(TestCase):
 class BookCreateViewTests(TestCase):
     def test_add_book_response(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:add_book'))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_add_book_post_with_data(self):
         book = {
@@ -259,7 +258,7 @@ class BookCreateViewTests(TestCase):
         }
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
         self.assertIs(Book.objects.filter(title=book['title']).exists(), True)
 
     def test_add_book_with_count_response(self):
@@ -277,7 +276,7 @@ class BookCreateViewTests(TestCase):
         books = Book.objects.all()
         books_count = books.count()
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
         self.assertEqual(1, books_count)
 
     def test_add_book_with_bad_data(self):
@@ -291,7 +290,7 @@ class BookCreateViewTests(TestCase):
             'language': 'pl'
         }
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # self.assertRaises(ValidationError, BookCreateView.post, kwargs=book)
 
@@ -303,7 +302,7 @@ class BookCreateViewTests(TestCase):
         }
 
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
         books_count = Book.objects.all().count()
         self.assertEqual(1, books_count)
@@ -317,7 +316,7 @@ class BookCreateViewTests(TestCase):
         }
 
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
 
 class BookDeleteViewTest(TestCase):
@@ -328,13 +327,13 @@ class BookDeleteViewTest(TestCase):
 
     def test_delete_book_response(self):
         response = self.client.get(reverse('aplikacjaKsiazkowa2:delete_book', kwargs={'pk': 1}))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_book_with_good_id(self):
         url = reverse('aplikacjaKsiazkowa2:delete_book', kwargs={'pk': 1})
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         books = Book.objects.all()
         books_count = books.count()
@@ -344,7 +343,7 @@ class BookDeleteViewTest(TestCase):
 
         self.assertNotIn(delete_book, books)
         # przekierowuje nas do 'listy', więc dlatego status kodu 302
-        self.assertEqual(response_ok.status_code, 302)
+        self.assertEqual(response_ok.status_code, status.HTTP_302_FOUND)
 
         books_after_delete = Book.objects.all()
         count_after_delete = books_after_delete.count()
@@ -356,7 +355,7 @@ class BookDeleteViewTest(TestCase):
         url = reverse('aplikacjaKsiazkowa2:delete_book', kwargs={'pk': 100})
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class BookUpdateViewTests(TestCase):
@@ -369,13 +368,13 @@ class BookUpdateViewTests(TestCase):
         url = reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'pk': 1})
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_book_with_bad_id(self):
         url = reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'pk': 100})
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
     def test_update_book_with_good_id_and_data(self):
         url = reverse('aplikacjaKsiazkowa2:edit_book', kwargs={'pk': 1})
@@ -392,7 +391,7 @@ class BookUpdateViewTests(TestCase):
 
         response = self.client.post(url, book)
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
         self.assertIs(Book.objects.filter(title=book['title']).exists(), True)
 
     def test_update_book_without_change_data(self):
@@ -409,7 +408,7 @@ class BookUpdateViewTests(TestCase):
         response = self.client.post(url, book)
         title = "Brzechwa dzieciom"
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
         self.assertIs(Book.objects.filter(title=title).exists(), True)
 
     def test_update_book_without_post_data(self):
@@ -417,7 +416,7 @@ class BookUpdateViewTests(TestCase):
         response = self.client.post(url)
         title = "Brzechwa dzieciom"
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
         self.assertIs(Book.objects.filter(title=title).exists(), True)
 
 
@@ -504,7 +503,7 @@ class GugleApiViewTests(TestCase):
         url = reverse('aplikacjaKsiazkowa2:gugle')
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_gugle_api_post(self):
         book_from_api = 'Hobbit'
@@ -512,7 +511,7 @@ class GugleApiViewTests(TestCase):
         context = {'book_from_api': book_from_api}
         response = self.client.post(url, context)
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
     @responses.activate
     def test_gugle_api_with_mocking_good_json(self):

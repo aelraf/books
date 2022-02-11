@@ -25,43 +25,11 @@ class OurApiView(generic.TemplateView):
 
 
 class BookCreateView(CreateView):
-    # widok klasowy za metodę add_book
     model = Book
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/add_book.html'
     context_object_name = 'books_data'
     success_url = reverse_lazy('aplikacjaKsiazkowa2:lista')
-
-    # def post(self, request, *args, **kwargs):
-    #     title = request.POST.get('title') if 'title' in request.POST else ""
-    #
-    #     try:
-    #         new_book, created = Book.objects.get_or_create(
-    #             title=title,
-    #             author=request.POST.get('author') if 'author' in request.POST else "",
-    #             pub_date=request.POST.get('pub_date') if 'pub_date' in request.POST else "",
-    #             isbn=request.POST.get('isbn') if 'isbn' in request.POST else "",
-    #             pages=request.POST.get('pages') if 'pages' in request.POST else None,
-    #             cover=request.POST.get('cover') if 'cover' in request.POST else "",
-    #             language=request.POST.get('language') if 'language' in request.POST else ""
-    #         )
-    #         if created is False:
-    #             messages.error(request, "Błąd dodawania książki")
-    #             # print('blad dodawania ksiazki: created: {}, book: {}'.format(created, new_book))
-    #             return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-    #         else:
-    #             messages.success(request, "Dodano książkę: {}".format(new_book))
-    #             # print('dodajemy ksiazke: {} \n'.format(new_book))
-    #     except ValidationError as err:
-    #         messages.error(request, "Błąd dodawania książki: {}".format(err.message))
-    #         # print('Validation Error podczas dodawania ksiazki: {}, {}'.format(err.message, err.params))
-    #         return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-    #     except IntegrityError as err:
-    #         messages.error(request, "Błąd dodawania książki: {}".format(err))
-    #         # print('IntegrityErr podczas dodawania ksiazki: {}'.format(err))
-    #         return render(request, 'aplikacjaKsiazkowa2/add_book.html')
-    #     else:
-    #         return redirect('aplikacjaKsiazkowa2:lista')
 
 
 class BookDeleteView(DeleteView):
