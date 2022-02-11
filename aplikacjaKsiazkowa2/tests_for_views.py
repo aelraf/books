@@ -421,30 +421,82 @@ class BookUpdateViewTests(TestCase):
         self.assertIs(Book.objects.filter(title=title).exists(), True)
 
 
-def mock_good_gugle_api() -> dict:
-    book = {
-        'title': "Brzechwa dzieciom",
-        'author': "Jan Brzechwa",
-        'pub_date': "2011-01-01",
-        'isbn': "53387501243KS",
-        'pages': 136,
-        'cover': "https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-        'language': "PL"
-    }
-    return book
+def mock_good_gugle_api():
+    book_json = {
+                "kind": "books#volumes",
+                "totalItems": 729,
+                "items": [
+                    {
+                        "kind": "books#volume",
+                        "id": "rToaogEACAAJ",
+                        "etag": "tsp8lpI0qSo",
+                        "selfLink": "https://www.googleapis.com/books/v1/volumes/rToaogEACAAJ",
+                        "volumeInfo": {
+                            "title": "Hobbit czyli tam i z powrotem",
+                            "authors": [
+                                "J. R. R. Tolkien"
+                            ],
+                            "publishedDate": "2015-01",
+                            "industryIdentifiers": [
+                                {
+                                    "type": "ISBN_10",
+                                    "identifier": "8324403876"
+                                },
+                                {
+                                    "type": "ISBN_13",
+                                    "identifier": "9788324403875"
+                                }
+                            ],
+                            "pageCount": 320,
+                            "language": "pl",
+                            "previewLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&cd=1&source=gbs_api",
+                            "infoLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&source=gbs_api",
+                            "canonicalVolumeLink": "https://books.google.com/books/about/Hobbit_czyli_tam_i_z_powrotem.html?hl=&id=rToaogEACAAJ"
+                        },
+                    }
+                ]
+            }
+    return book_json
 
 
 def mock_bad_gugle_api() -> dict:
-    book = {
-        'title': "Tuwim starym",
-        'author': 213,
-        'pub_date': "01-01-2345",
-        'isbn': "53387501243KS",
-        'pages': '136',
-        'cover': "https://bigimg.taniaksiazka.pl/images/popups/607/53387501243KS.jpg",
-        'language': "PL"
-    }
-    return book
+    book_json = {
+                "kind": "books#volumes",
+                "totalItems": 729,
+                "items": [
+                    {
+                        "kind": "books#volume",
+                        "id": "rToaogEACAAJ",
+                        "etag": "tsp8lpI0qSo",
+                        "selfLink": "https://www.googleapis.com/books/v1/volumes/rToaogEACAAJ",
+                        "volumeInfo": {
+                            "title": "Hobbit czyli tam i z powrotem",
+                            "authors": [
+                                "J. R. R. Tolkien",
+                                123123123,
+                                123123123
+                            ],
+                            "publishedDate": "10-12-2015",
+                            "industryIdentifiers": [
+                                {
+                                    "type": "ISBN_10",
+                                    "identifier": 123123123
+                                },
+                                {
+                                    "type": "ISBN_13",
+                                    "identifier": "9788324403875"
+                                }
+                            ],
+                            "pageCount": 'Ala ma kota',
+                            "language": "pl",
+                            "previewLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&cd=1&source=gbs_api",
+                            "infoLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&source=gbs_api",
+                            "canonicalVolumeLink": "https://books.google.com/books/about/Hobbit_czyli_tam_i_z_powrotem.html?hl=&id=rToaogEACAAJ"
+                        },
+                    }
+                ]
+            }
+    return book_json
 
 
 class GugleApiViewTests(TestCase):
@@ -462,79 +514,13 @@ class GugleApiViewTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
-
-class GugleApiViewTestOnlyWithRealUsingGugleApi(TestCase):
     @responses.activate
-    def test_gugle_api_with_mocking(self):
+    def test_gugle_api_with_mocking_good_json(self):
         book_from_api = 'Hobbit'
         responses.add(
             responses.GET,
             f"https://www.googleapis.com/books/v1/volumes?q={book_from_api}",
-            json={
-                "kind":"books#volumes",
-                "totalItems":729,
-                "items":[
-                    {
-                        "kind":"books#volume",
-                        "id":"rToaogEACAAJ",
-                        "etag":"tsp8lpI0qSo",
-                        "selfLink":"https://www.googleapis.com/books/v1/volumes/rToaogEACAAJ",
-                        "volumeInfo":{
-                            "title":"Hobbit czyli tam i z powrotem",
-                            "authors":[
-                                "J. R. R. Tolkien"
-                            ],
-                            "publishedDate":"2015-01",
-                            "industryIdentifiers":[
-                                {
-                                    "type":"ISBN_10",
-                                    "identifier":"8324403876"
-                                },
-                                {
-                                    "type":"ISBN_13",
-                                    "identifier":"9788324403875"
-                                }
-                            ],
-                            "readingModes":{
-                                "text":False,
-                                "image":False
-                            },
-                            "pageCount":320,
-                            "printType":"BOOK",
-                            "averageRating":5,
-                            "ratingsCount":1,
-                            "maturityRating":"NOT_MATURE",
-                            "allowAnonLogging":False,
-                            "contentVersion":"preview-1.0.0",
-                            "language":"pl",
-                            "previewLink":"http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&cd=1&source=gbs_api",
-                            "infoLink":"http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&source=gbs_api",
-                            "canonicalVolumeLink":"https://books.google.com/books/about/Hobbit_czyli_tam_i_z_powrotem.html?hl=&id=rToaogEACAAJ"
-                        },
-                        "saleInfo":{
-                            "country":"PL",
-                            "saleability":"NOT_FOR_SALE",
-                            "isEbook":False
-                        },
-                        "accessInfo":{
-                            "country":"PL",
-                            "viewability":"NO_PAGES",
-                            "embeddable":False,
-                            "publicDomain":False,
-                            "textToSpeechPermission":"ALLOWED",
-                            "epub":{
-                                "isAvailable":False
-                            },
-                            "pdf":{
-                                "isAvailable":False
-                            },
-                            "webReaderLink":"http://play.google.com/books/reader?id=rToaogEACAAJ&hl=&printsec=frontcover&source=gbs_api",
-                            "accessViewStatus":"NONE",
-                            "quoteSharingAllowed":False
-                        }
-                    }
-                ]
-            },
+            json=mock_good_gugle_api(),
             status=status.HTTP_200_OK
         )
         url = reverse('aplikacjaKsiazkowa2:gugle')
@@ -548,6 +534,28 @@ class GugleApiViewTestOnlyWithRealUsingGugleApi(TestCase):
 
         self.assertEqual(books_count, 1)
 
+    @responses.activate
+    def test_gugle_api_with_mocking_bad_json(self):
+        book_from_api = 'Hobbit'
+        responses.add(
+            responses.GET,
+            f"https://www.googleapis.com/books/v1/volumes?q={book_from_api}",
+            json=mock_bad_gugle_api(),
+            status=status.HTTP_200_OK
+        )
+        url = reverse('aplikacjaKsiazkowa2:gugle')
+        context = {'book_from_api': book_from_api}
+        response = self.client.post(url, context)
+
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+
+        books = Book.objects.all()
+        books_count = books.count()
+
+        self.assertEqual(books_count, 0)
+
+
+class GugleApiViewTestOnlyWithRealUsingGugleApi(TestCase):
     def test_gugle_api_with_only_test_with_real_google(self):
         book_from_api = 'Hobbit'
         url = reverse('aplikacjaKsiazkowa2:gugle')
