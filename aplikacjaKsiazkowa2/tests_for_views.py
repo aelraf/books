@@ -316,7 +316,7 @@ class BookCreateViewTests(TestCase):
         }
 
         response = self.client.post(reverse('aplikacjaKsiazkowa2:add_book'), book)
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class BookDeleteViewTest(TestCase):
@@ -548,10 +548,7 @@ class GugleApiViewTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
-        books = Book.objects.all()
-        books_count = books.count()
-
-        self.assertEqual(books_count, 0)
+        self.assertQuerysetEqual(response.context['books_data'], [])
 
 
 class GugleApiViewTestOnlyWithRealUsingGugleApi(TestCase):

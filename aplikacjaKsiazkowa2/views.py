@@ -46,11 +46,10 @@ class BookDeleteView(DeleteView):
 
 
 class BookUpdateView(UpdateView):
-    # drugi widok klasowy w zamian za metodę edit()
+    # widok odpowiedzialny za edycję książek
     model = Book
     fields = '__all__'
     template_name = 'aplikacjaKsiazkowa2/edit.html'
-    # context_object_name = 'books_data'
     success_url = 'aplikacjaKsiazkowa2/lista.html'
 
     def get(self, request, *args, **kwargs):
