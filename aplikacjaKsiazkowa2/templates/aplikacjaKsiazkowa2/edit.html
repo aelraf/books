@@ -6,29 +6,29 @@
 
 {% block content %}
 <div class="container" style="margin: 2px">
-    <table class="table table-striped table-bordered" style="width: 100%">
-        <thead>
-            <tr>
-                {% for field in form %}
-                    <th>
-                        {{ field.label }}
-                    </th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                {% for field in form %}
-                    <th>
-                        {{ field }}
-                    </th>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
     <div style="responsive">
         <form action="{% url 'aplikacjaKsiazkowa2:edit_book' book.id %}" method="POST" id=book.id>
             {% csrf_token %}
+            <table class="table table-striped table-bordered" style="width: 100%">
+                <thead>
+                    <tr>
+                        {% for field in form %}
+                            <th>
+                                {{ field.label }}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for field in form %}
+                            <th>
+                                {{ field }}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
             <button type="submit" class="btn btn-primary">Zapisz</button>
         </form>
     </div>
