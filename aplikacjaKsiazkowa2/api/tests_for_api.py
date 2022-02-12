@@ -3,6 +3,7 @@ import json
 
 from django.http import Http404
 from django.test import TestCase
+from rest_framework import status
 from rest_framework.test import APIClient, RequestsClient
 
 from aplikacjaKsiazkowa2.api.views import BookDetailApi
@@ -20,7 +21,7 @@ class RESTApiTest(TestCase):
         client = APIClient()
         response = client.get('http://127.0.0.1:8000/api')
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 7)
@@ -180,33 +181,13 @@ class BookDetailApiTests(TestCase):
         client = APIClient()
         response = client.get('http://127.0.0.1:8000/api/books/1')
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 8)
 
     def test_get_with_bad_pk(self):
         client = APIClient()
-        with self.assertRaises(ValueError):
-            response = client.get('http://127.0.0.1:8000/api/books/qwerty')
-            self.assertEqual(response.status_code, 200)
+        response = client.get('http://127.0.0.1:8000/api/books/qwerty')
 
-    def test_get_with_to_big_pk(self):
-        client = APIClient()
-
-        response = client.get('http://127.0.0.1:8000/api/books/100')
-        self.assertEqual(response.status_code, 404)
-
-    def test_get_object_with_good_pk(self):
-        pk = 2
-        book_detail = BookDetailApi()
-        book = book_detail.get_object(pk=pk)
-
-        assert book.author == "John Tolkien"
-        assert "Hobbit" in book.title
-
-    def test_get_object_with_bad_pk(self):
-        pk = 123
-        book_detail = BookDetailApi()
-
-        self.assertRaises(Http404, book_detail.get_object, pk=pk)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -178,7 +178,6 @@ class GugleApiView(generic.View):
                 if response.status_code == status.HTTP_200_OK:
                     books_data = response.json()
 
-                    print('słowo: {}, items: '.format(book_from_gugle))
                     for book in books_data['items']:
                         volume = book['volumeInfo']
                         title = volume['title']
