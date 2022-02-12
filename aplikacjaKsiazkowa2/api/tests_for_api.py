@@ -37,7 +37,7 @@ class BookListApiTests(TestCase):
         client = APIClient()
         response = client.get('http://127.0.0.1:8000/api/books')
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 3)
@@ -47,7 +47,7 @@ class BookListApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/api/books?title=brzechwa')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 1)
@@ -60,7 +60,7 @@ class BookListApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/api/books?title=1234')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 0)
@@ -72,7 +72,7 @@ class BookListApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/api/books?author=Tolkien')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 1)
@@ -85,7 +85,7 @@ class BookListApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/api/books?author=qwe123tre')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 0)
@@ -97,7 +97,7 @@ class BookListApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/api/books?language=pl')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 3)
@@ -110,7 +110,7 @@ class BookListApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/api/books?language=eng')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 0)
@@ -122,7 +122,7 @@ class BookListApiTests(TestCase):
         response = client.get('http://127.0.0.1:8000/api/books?language=12qwerty345')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 0)
@@ -131,10 +131,10 @@ class BookListApiTests(TestCase):
 
     def test_book_list_with_two_good_dates(self):
         client = RequestsClient()
-        response = client.get('http://127.0.0.1:8000/api/books?d1=2000-01-01&d2=2020-01-01')
+        response = client.get('http://127.0.0.1:8000/api/books?pub_date_after=2000-01-01&pub_date_before=2020-01-01')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 3)
@@ -145,10 +145,10 @@ class BookListApiTests(TestCase):
     def test_book_list_with_one_date(self):
         # zwróci całą listę książek, bo warunek nie będzie spełniony
         client = RequestsClient()
-        response = client.get('http://127.0.0.1:8000/api/books?d1=2000-01-01')
+        response = client.get('http://127.0.0.1:8000/api/books?pub_date_after=2000-01-01')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = json.loads(response.content)
         self.assertEqual(len(data), 3)
@@ -159,16 +159,13 @@ class BookListApiTests(TestCase):
     def test_book_list_with_bad_date(self):
         # przy błędnej dacie także zwróci całą listę książek
         client = RequestsClient()
-        response = client.get('http://127.0.0.1:8000/api/books?d1=ala-ma-kota')
+        response = client.get('http://127.0.0.1:8000/api/books?pub_date_after=ala-ma-kota')
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         data = json.loads(response.content)
-        self.assertEqual(len(data), 3)
-
-        self.assertGreaterEqual(result[0]['pub_date'], '1000-01-01')
-        self.assertLessEqual(result[0]['pub_date'], '2022-01-01')
+        self.assertEqual(len(data), 1)
 
 
 class BookDetailApiTests(TestCase):
