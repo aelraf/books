@@ -17,7 +17,7 @@ class GetRoutesApi(APIView):
             'GET /api/books?title=looking_title',
             'GET /api/books?author=looking_author',
             'GET /api/books?language=looking_language',
-            'GET /api/books?d1=YYYY-MM-DD&d2=YYYY-MM-DD',
+            'GET /api/books?pub_date_after=YYYY-MM-DD&pub_date_before=YYYY-MM-DD',
         ]
         return Response(routes)
 
