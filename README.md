@@ -42,6 +42,6 @@ Aplikację wykonaliśmy za pomocą frameworku Django, najpierw przy użyciu wido
 
 
 <h1>To do</h1>
-- testy do API restowego (bieżące pokrycie 82%) <br>
-- testy do obsługi API googlowego z mockowaniem odpowiedzi od gugli <br>
-- testy do widoków ogólnych (bieżące pokrycie 86%) <br>
+- testy do API restowego (ok, bieżące pokrycie - 100%) <br>
+- testy do obsługi API googlowego z mockowaniem odpowiedzi od gugli (jest ok) <br>
+- testy do widoków ogólnych (bieżące pokrycie 90%) <br>
