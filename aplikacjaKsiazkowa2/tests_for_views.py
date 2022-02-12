@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import responses
+from django.core.exceptions import ValidationError
 from rest_framework import status
 from django.db.models import QuerySet
 from django.test import TestCase
@@ -448,9 +449,11 @@ def mock_good_gugle_api():
                             ],
                             "pageCount": 320,
                             "language": "pl",
-                            "previewLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&cd=1&source=gbs_api",
+                            "previewLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq="
+                                           "Hobbit&hl=&cd=1&source=gbs_api",
                             "infoLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&source=gbs_api",
-                            "canonicalVolumeLink": "https://books.google.com/books/about/Hobbit_czyli_tam_i_z_powrotem.html?hl=&id=rToaogEACAAJ"
+                            "canonicalVolumeLink": "https://books.google.com/books/about/Hob"
+                                                   "bit_czyli_tam_i_z_powrotem.html?hl=&id=rToaogEACAAJ"
                         },
                     }
                 ]
@@ -488,9 +491,11 @@ def mock_bad_gugle_api() -> dict:
                             ],
                             "pageCount": 'Ala ma kota',
                             "language": "pl",
-                            "previewLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&cd=1&source=gbs_api",
+                            "previewLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq="
+                                           "Hobbit&hl=&cd=1&source=gbs_api",
                             "infoLink": "http://books.google.pl/books?id=rToaogEACAAJ&dq=Hobbit&hl=&source=gbs_api",
-                            "canonicalVolumeLink": "https://books.google.com/books/about/Hobbit_czyli_tam_i_z_powrotem.html?hl=&id=rToaogEACAAJ"
+                            "canonicalVolumeLink": "https://books.google.com/books/about/Hobbit_czyli_tam_"
+                                                   "i_z_powrotem.html?hl=&id=rToaogEACAAJ"
                         },
                     }
                 ]
@@ -505,17 +510,10 @@ class GugleApiViewTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_gugle_api_post(self):
-        book_from_api = 'Hobbit'
-        url = reverse('aplikacjaKsiazkowa2:gugle')
-        context = {'book_from_api': book_from_api}
-        response = self.client.post(url, context)
-
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
-
     @responses.activate
     def test_gugle_api_with_mocking_good_json(self):
-        book_from_api = 'Hobbit'
+        print('1 - good json od gugli')
+        book_from_api = 'Hobbit1'
         responses.add(
             responses.GET,
             f"https://www.googleapis.com/books/v1/volumes?q={book_from_api}",
@@ -535,7 +533,8 @@ class GugleApiViewTests(TestCase):
 
     @responses.activate
     def test_gugle_api_with_mocking_bad_json(self):
-        book_from_api = 'Hobbit'
+        print('2 - bad json od gugli')
+        book_from_api = 'Houbet2'
         responses.add(
             responses.GET,
             f"https://www.googleapis.com/books/v1/volumes?q={book_from_api}",
@@ -544,15 +543,18 @@ class GugleApiViewTests(TestCase):
         )
         url = reverse('aplikacjaKsiazkowa2:gugle')
         context = {'book_from_api': book_from_api}
-        response = self.client.post(url, context)
+        # self.assertRaises(ValidationError, self.client.post, {url: url, context: context})
 
+        response = self.client.post(url, context)
+        self.assertRaises(ValidationError)
         self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
-        self.assertQuerysetEqual(response.context['books_data'], [])
+        self.assertNotIsInstance(response.context, QuerySet)
 
 
 class GugleApiViewTestOnlyWithRealUsingGugleApi(TestCase):
     def test_gugle_api_with_only_test_with_real_google(self):
+        print('3 - wprost od gugli')
         book_from_api = 'Hobbit'
         url = reverse('aplikacjaKsiazkowa2:gugle')
         context = {'book_from_api': book_from_api}
